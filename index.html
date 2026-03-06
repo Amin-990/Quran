@@ -1,0 +1,3521 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=no">
+<meta name="theme-color" content="#1b6b45">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="القرآن">
+<link rel="manifest" id="pwa-manifest-link">
+<title> القرآن الکریم </title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g1:#0a2d1a;--g2:#1b6b45;--g3:#2a9e68;--g4:#d4f0e4;
+  --au:#c18e00;--au2:#e0a800;--au3:#fff8e1;
+  --bg:#f0ebe0;--card:#fff;--txt:#1a1208;--dim:#7a6a50;--bdr:#ddd6c8;
+  --sbw:308px;--tph:54px;--bnH:58px;
+  --far:'Amiri',serif;--fur:'Noto Nastaliq Urdu','Amiri',serif;
+}
+.dk{--bg:#0c1410;--card:#162418;--txt:#e6f2eb;--dim:#88aa96;--bdr:#253c2e;
+    --g1:#060f0a;--g2:#2a9e68;--g4:#0d2218;--au3:#1a1300}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--fur);background:var(--bg);color:var(--txt);display:flex;flex-direction:column}
+
+/* ── TOPBAR ── */
+.top{height:var(--tph);background:linear-gradient(135deg,var(--g1),var(--g2));
+     display:flex;align-items:center;padding:0 8px;gap:6px;
+     flex-shrink:0;box-shadow:0 2px 14px rgba(0,0,0,.3);z-index:300;position:relative}
+.tb{display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.14);
+    border:none;color:#fff;border-radius:7px;padding:5px 10px;cursor:pointer;
+    font-family:var(--fur);font-size:.78rem;white-space:nowrap;transition:background .2s;flex-shrink:0}
+.tb:hover{background:rgba(255,255,255,.25)}
+.tb.g{background:linear-gradient(135deg,var(--au),var(--au2));color:#1a1000;font-weight:700}
+.tb.ic{padding:6px;border-radius:50%;width:32px;height:32px}
+.tt{flex:1;color:#fff;font-size:.8rem;font-weight:600;text-align:center;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.pgc{display:flex;align-items:center;background:rgba(0,0,0,.22);border-radius:7px;overflow:hidden;flex-shrink:0}
+.pgc button{background:none;border:none;color:#fff;padding:5px 7px;cursor:pointer;font-size:1rem;line-height:1}
+.pgc button:disabled{opacity:.3;cursor:not-allowed}
+#pgi{background:rgba(255,255,255,.12);border:none;color:#fff;width:44px;
+     text-align:center;font-size:.76rem;padding:3px 1px;font-family:var(--fur)}
+#pgi:focus{outline:none}
+.pgof{color:rgba(255,255,255,.6);font-size:.7rem;padding:0 5px 0 2px;white-space:nowrap}
+.zc{display:flex;gap:3px;flex-shrink:0}
+.zb{background:rgba(255,255,255,.12);border:none;color:#fff;width:27px;height:27px;
+    border-radius:6px;display:flex;align-items:center;justify-content:center;
+    cursor:pointer;font-size:.9rem;font-weight:700}
+.zb:hover{background:rgba(255,255,255,.25)}
+
+/* ── LAYOUT ── */
+.lay{flex:1;display:flex;overflow:hidden;position:relative}
+
+/* ── SIDEBAR ── */
+.sb{width:var(--sbw);background:var(--g1);color:#fff;
+    display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;transition:width .3s}
+.sb.cl{width:0}
+.sbh{background:rgba(0,0,0,.3);padding:9px 10px 7px;flex-shrink:0;border-bottom:2px solid var(--au2)}
+.sbl{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+.sbi{width:32px;height:32px;background:linear-gradient(135deg,var(--au),var(--au2));
+     border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0}
+.t1{font-family:var(--far);font-size:.92rem;color:var(--au2);display:block}
+.t2{font-size:.64rem;color:rgba(255,255,255,.4);display:block}
+.sbs{width:100%;padding:6px 11px;background:rgba(255,255,255,.08);
+     border:1px solid rgba(255,255,255,.14);border-radius:18px;color:#fff;
+     font-family:var(--fur);font-size:.78rem;outline:none;text-align:right}
+.sbs::placeholder{color:rgba(255,255,255,.38)}
+.sbs:focus{border-color:var(--au2)}
+.stabs{display:flex;background:rgba(0,0,0,.25);flex-shrink:0}
+.stab{flex:1;padding:7px 4px;text-align:center;cursor:pointer;
+      font-size:.7rem;color:rgba(255,255,255,.5);border-bottom:2px solid transparent;transition:all .2s}
+.stab.on{color:var(--au2);border-bottom-color:var(--au2)}
+.sbb{flex:1;overflow-y:auto;overflow-x:hidden}
+.sbb::-webkit-scrollbar{width:3px}
+.sbb::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:2px}
+.tp{display:none}
+.tp.on{display:block}
+
+/* ── SURAH ROW ── */
+.sr{display:flex;align-items:center;gap:7px;padding:8px 9px;
+    border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer;transition:background .15s}
+.sr:hover{background:rgba(255,255,255,.07)}
+.sr.act{background:rgba(224,168,0,.18);border-right:3px solid var(--au2)}
+.sr.act .sra{color:var(--au2)}
+.srn{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--au),var(--au2));
+     color:#1a1000;display:flex;align-items:center;justify-content:center;font-size:.64rem;font-weight:700;flex-shrink:0}
+.srb{flex:1;min-width:0}
+.sra{font-family:var(--far);font-size:.9rem;color:#fff;display:block;line-height:1.25}
+.sru{font-size:.62rem;color:rgba(255,255,255,.48);display:block}
+.srm{font-size:.6rem;color:rgba(224,168,0,.65);display:block}
+.srp{font-size:.6rem;background:rgba(255,255,255,.1);color:rgba(255,255,255,.5);
+     padding:2px 5px;border-radius:9px;white-space:nowrap;flex-shrink:0}
+.srarr{color:rgba(255,255,255,.22);font-size:.65rem;flex-shrink:0;transition:transform .2s}
+.sr.op .srarr{transform:rotate(90deg)}
+
+/* ── SUB LIST ── */
+.sub{display:none;background:rgba(0,0,0,.22)}
+.sub.on{display:block}
+.ssec{padding:5px 11px;font-size:.65rem;color:var(--au2);font-weight:600;
+      border-bottom:1px solid rgba(255,255,255,.04)}
+.srow{display:flex;align-items:center;justify-content:space-between;
+      padding:5px 11px 5px 9px;font-size:.72rem;color:rgba(255,255,255,.68);
+      border-bottom:1px solid rgba(255,255,255,.03);cursor:pointer;transition:background .12s}
+.srow:hover{background:rgba(255,255,255,.07);color:#fff}
+.srl{display:flex;align-items:center;gap:5px;flex:1;min-width:0}
+.snum{width:19px;height:19px;border-radius:50%;background:rgba(255,255,255,.1);
+      display:flex;align-items:center;justify-content:center;font-size:.6rem;flex-shrink:0}
+.spg{font-size:.6rem;color:rgba(255,255,255,.28);white-space:nowrap}
+
+/* ── PARA ROW ── */
+.pr{display:flex;align-items:center;gap:8px;padding:8px 9px;
+    border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer;transition:background .15s}
+.pr:hover{background:rgba(255,255,255,.07)}
+.prn{width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,var(--g2),var(--g3));
+     color:#fff;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0}
+.prna{font-family:var(--far);font-size:.86rem;color:#fff}
+.prs{font-size:.63rem;color:rgba(255,255,255,.43)}
+
+/* ── PDF AREA ── */
+.pa{flex:1;overflow:auto;display:flex;flex-direction:column;align-items:center;
+    padding:12px;gap:10px;background:var(--bg);min-width:0}
+.pa::-webkit-scrollbar{width:6px}
+.pa::-webkit-scrollbar-thumb{background:var(--g3);border-radius:4px}
+
+/* ── UPLOAD ── */
+.upz{width:100%;max-width:480px;margin:auto;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
+.dbox{width:100%;border:2px dashed var(--g3);border-radius:12px;padding:34px 22px;
+      background:var(--card);box-shadow:0 4px 20px rgba(0,0,0,.1);cursor:pointer;transition:all .3s}
+.dbox:hover,.dbox.dov{border-color:var(--au2);background:var(--au3);transform:translateY(-2px)}
+.dico{font-size:2.8rem}
+.dt1{font-size:1.05rem;color:var(--g2);margin:8px 0 3px;font-weight:600}
+.dt2{font-size:.76rem;color:var(--dim)}
+.dbtn{margin-top:10px;padding:8px 24px;background:linear-gradient(135deg,var(--g2),var(--g3));
+      color:#fff;border:none;border-radius:18px;font-family:var(--fur);font-size:.83rem;cursor:pointer}
+
+/* cached banner */
+.cbanner{width:100%;max-width:480px;background:var(--au3);border:1.5px solid var(--au2);
+         border-radius:10px;padding:10px 13px;font-size:.78rem;color:#7a5000;
+         display:none;cursor:pointer;transition:all .2s;text-align:right}
+.dk .cbanner{color:var(--au2)}
+.cbanner:hover{filter:brightness(.96)}
+
+/* ── CALIBRATE BOX (shown after first PDF load) ── */
+.calbox{width:100%;max-width:480px;background:var(--card);border-radius:12px;
+        box-shadow:0 4px 20px rgba(0,0,0,.12);padding:16px;display:none;text-align:right}
+.calbox.on{display:block}
+.cal-title{font-size:.88rem;color:var(--g2);font-weight:600;margin-bottom:6px}
+.dk .cal-title{color:var(--g3)}
+.cal-desc{font-size:.74rem;color:var(--dim);line-height:1.9;margin-bottom:10px}
+.cal-desc b{color:var(--au2)}
+.cal-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.cal-lbl{font-size:.78rem;color:var(--txt);white-space:nowrap}
+#cal-inp{width:80px;padding:6px 10px;border:2px solid var(--g3);border-radius:8px;
+         font-size:.9rem;text-align:center;background:var(--bg);color:var(--txt);
+         font-family:var(--fur)}
+#cal-inp:focus{outline:none;border-color:var(--au2)}
+.cal-apply{padding:7px 18px;background:linear-gradient(135deg,var(--g2),var(--g3));
+           color:#fff;border:none;border-radius:18px;cursor:pointer;
+           font-family:var(--fur);font-size:.8rem}
+.cal-result{font-size:.74rem;color:var(--g3);margin-top:4px;min-height:18px}
+
+/* ── LOADING ── */
+.ldg{display:none;flex-direction:column;align-items:center;justify-content:center;
+     gap:11px;padding:50px;margin:auto}
+.sp{width:42px;height:42px;border:4px solid var(--g4);
+    border-top-color:var(--g2);border-right-color:var(--au);border-radius:50%;
+    animation:sp .9s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.lt{color:var(--dim);font-size:.84rem}
+
+/* ── CANVAS ── */
+.cw{display:none;flex-direction:column;align-items:center;gap:8px;width:100%}
+#cv,#cv2{max-width:100%;box-shadow:0 6px 36px rgba(0,0,0,.2);border-radius:5px;background:#fff;display:block}
+.bc{width:100%;max-width:820px;display:flex;align-items:center;gap:4px;
+    flex-wrap:wrap;font-size:.72rem;color:var(--dim)}
+.bci{cursor:pointer;color:var(--g3)}
+.bci:hover{text-decoration:underline}
+.bcs,.bcc{color:var(--dim)}
+
+/* ── BOTTOM NAV ── */
+.bn{display:none;height:76px;background:linear-gradient(180deg,#0e3420 0%,var(--g1) 100%);flex-shrink:0;
+    z-index:200;border-top:2px solid rgba(224,168,0,.3);
+    box-shadow:0 -4px 24px rgba(0,0,0,.5)}
+.bni{display:flex;height:100%;padding:3px 2px 5px}
+.bb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:3px;background:none;border:none;color:rgba(255,255,255,.5);cursor:pointer;
+    font-family:var(--fur);font-size:.62rem;transition:all .18s;
+    border-radius:12px;margin:2px;padding:3px 1px;position:relative}
+.bb:active{transform:scale(.91);background:rgba(255,255,255,.08)}
+.bb.on,.bb.bm-active{color:var(--au2)}
+.bb svg{width:22px;height:22px;transition:transform .18s}
+.bb:active svg{transform:scale(.88)}
+.bb.bb-nav{color:var(--au2);font-weight:700}
+.bb.bb-nav svg{width:26px;height:26px}
+.bb.bm-active svg{fill:var(--au2);stroke:var(--au2)}
+
+/* ── BOOKMARK PANEL ── */
+.bmpanel{display:none;position:fixed;bottom:76px;left:0;right:0;
+         background:var(--g1);border-top:2px solid var(--au2);
+         z-index:350;max-height:55vh;overflow-y:auto;
+         box-shadow:0 -8px 30px rgba(0,0,0,.5)}
+.bmpanel.on{display:block}
+.bmpanel::-webkit-scrollbar{width:3px}
+.bmpanel::-webkit-scrollbar-thumb{background:var(--au2);border-radius:2px}
+.bmhd{display:flex;align-items:center;justify-content:space-between;
+      padding:10px 14px 8px;border-bottom:1px solid rgba(255,255,255,.1)}
+.bmhd-t{color:var(--au2);font-size:.82rem;font-weight:600}
+.bmhd-x{background:rgba(255,255,255,.12);border:none;color:#fff;
+         width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:.9rem}
+.bmlist{padding:6px 8px}
+.bmrow{display:flex;align-items:center;gap:8px;padding:8px 10px;
+       border-radius:10px;margin-bottom:4px;cursor:pointer;
+       background:rgba(255,255,255,.05);transition:background .15s}
+.bmrow:hover,.bmrow:active{background:rgba(224,168,0,.15)}
+.bmrow-ico{font-size:1.1rem;flex-shrink:0}
+.bmrow-info{flex:1;min-width:0}
+.bmrow-pg{color:#fff;font-size:.8rem;font-weight:600}
+.bmrow-lbl{color:rgba(255,255,255,.5);font-size:.66rem;display:block}
+.bmrow-del{background:rgba(255,0,0,.15);border:1px solid rgba(255,80,80,.3);
+           color:#ff7070;width:26px;height:26px;border-radius:50%;
+           display:flex;align-items:center;justify-content:center;
+           font-size:.8rem;cursor:pointer;flex-shrink:0;transition:all .15s}
+.bmrow-del:hover{background:rgba(255,0,0,.35)}
+.bm-empty{text-align:center;padding:24px 16px;color:rgba(255,255,255,.35);font-size:.78rem}
+.bm-addbtn{width:calc(100% - 16px);margin:0 8px 10px;padding:10px;
+           background:linear-gradient(135deg,var(--au),var(--au2));
+           color:#1a1000;border:none;border-radius:12px;font-family:var(--fur);
+           font-size:.82rem;font-weight:700;cursor:pointer;display:flex;
+           align-items:center;justify-content:center;gap:6px}
+
+/* ── MOBILE DRAWER ── */
+.mov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:400}
+.mov.on{display:block}
+.md{position:fixed;top:var(--tph);bottom:76px;right:-100%;
+    width:min(var(--sbw),92vw);background:var(--g1);transition:right .3s;
+    z-index:500;display:flex;flex-direction:column;border-left:2px solid var(--au2);overflow:hidden}
+.md.on{right:0}
+
+/* ── MODAL ── */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);
+       backdrop-filter:blur(4px);z-index:600;align-items:center;justify-content:center;padding:12px}
+.modal.on{display:flex}
+.mbox{background:var(--card);border-radius:14px;width:100%;max-width:520px;
+      max-height:92vh;display:flex;flex-direction:column;overflow:hidden;
+      box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.mhd{background:linear-gradient(135deg,var(--g1),var(--g2));padding:12px 15px;
+     display:flex;align-items:center;justify-content:space-between;color:#fff;flex-shrink:0}
+.mhd h2{font-size:.88rem}
+.mx{background:rgba(255,255,255,.15);border:none;color:#fff;width:26px;height:26px;
+    border-radius:50%;cursor:pointer;font-size:.92rem;display:flex;align-items:center;justify-content:center}
+.mbd{padding:12px;overflow-y:auto;flex:1}
+.mbd::-webkit-scrollbar{width:4px}
+.mbd::-webkit-scrollbar-thumb{background:var(--g3);border-radius:2px}
+
+/* CAL SECTION IN MODAL */
+.cal-section{background:var(--g4);border:1.5px solid var(--g3);border-radius:10px;
+             padding:13px;margin-bottom:13px}
+.dk .cal-section{background:var(--g4);border-color:var(--g3)}
+.cal-s-title{font-size:.82rem;font-weight:600;color:var(--g2);margin-bottom:5px;display:flex;align-items:center;gap:5px}
+.dk .cal-s-title{color:var(--g3)}
+.cal-s-desc{font-size:.72rem;color:var(--dim);line-height:1.8;margin-bottom:9px}
+.cal-s-desc b{color:var(--au2)}
+.cal-s-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.cal-s-lbl{font-size:.76rem;color:var(--txt);white-space:nowrap}
+#moff{width:75px;padding:5px 9px;border:2px solid var(--g3);border-radius:7px;
+      font-size:.88rem;text-align:center;background:var(--bg);color:var(--txt)}
+#moff:focus{outline:none;border-color:var(--au2)}
+.cal-s-apply{padding:6px 16px;background:linear-gradient(135deg,var(--g2),var(--g3));
+             color:#fff;border:none;border-radius:16px;cursor:pointer;font-family:var(--fur);font-size:.76rem}
+.adj-btn{padding:6px 14px;background:rgba(0,0,0,.08);border:1.5px solid var(--bdr);
+         color:var(--txt);border-radius:8px;cursor:pointer;font-size:.82rem;font-weight:700;
+         transition:all .18s;font-family:var(--fur)}
+.adj-btn:hover{background:var(--bdr);transform:scale(1.05)}
+.adj-btn.pos{border-color:var(--g3);color:var(--g2)}
+.dk .adj-btn.pos{color:var(--g3)}
+.adj-btn.pos:hover{background:var(--g4)}
+.adj-btn.rst{border-color:#aaa;color:#888;font-size:.72rem}
+.adj-btn.rst:hover{background:#f0f0f0;color:#333}
+.dk .adj-btn.rst:hover{background:#333;color:#ccc}
+.cal-s-res{font-size:.7rem;color:var(--g3);margin-top:4px;min-height:16px}
+
+.minfo{background:var(--g4);border-right:3px solid var(--g3);border-radius:7px;
+       padding:8px 10px;font-size:.74rem;color:var(--g2);line-height:1.9;margin-bottom:10px}
+.dk .minfo{color:var(--g3)}
+.mtbl{width:100%;border-collapse:collapse;font-size:.74rem}
+.mtbl th{background:var(--g4);padding:6px;text-align:right;color:var(--g2);
+         border-bottom:2px solid var(--bdr);position:sticky;top:0;z-index:1}
+.dk .mtbl th{color:var(--g3)}
+.mtbl td{padding:4px 5px;border-bottom:1px solid var(--bdr)}
+.mtbl tr:hover td{background:var(--g4)}
+.pi{width:60px;padding:3px 5px;border:1px solid var(--bdr);border-radius:5px;
+    font-size:.74rem;text-align:center;background:var(--bg);color:var(--txt)}
+.mft{padding:10px 12px;border-top:1px solid var(--bdr);display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap}
+.bs{padding:7px 16px;background:linear-gradient(135deg,var(--g2),var(--g3));color:#fff;
+    border:none;border-radius:18px;cursor:pointer;font-family:var(--fur);font-size:.8rem}
+.br{padding:7px 16px;background:transparent;border:1px solid var(--bdr);color:var(--dim);
+    border-radius:18px;cursor:pointer;font-family:var(--fur);font-size:.8rem}
+.bdel{padding:7px 16px;background:transparent;border:1px solid #c00;color:#c00;
+      border-radius:18px;cursor:pointer;font-family:var(--fur);font-size:.8rem}
+.bdel:hover{background:#c00;color:#fff}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:82px;left:8px;
+       transform:translateX(-120%);
+       background:linear-gradient(135deg,var(--g1),var(--g2));
+       color:#fff;padding:8px 14px;border-radius:14px;
+       font-size:.75rem;box-shadow:0 4px 18px rgba(0,0,0,.4);
+       z-index:9999;transition:transform .3s cubic-bezier(.34,1.4,.64,1);
+       white-space:nowrap;max-width:55vw;text-overflow:ellipsis;overflow:hidden;
+       border:1px solid rgba(255,255,255,.12);pointer-events:none}
+#toast.on{transform:translateX(0)}
+
+/* ── READING PROGRESS BAR ── */
+#read-prog{position:fixed;top:0;right:0;left:0;height:3px;z-index:9999;
+           background:linear-gradient(90deg,var(--au),var(--au2),var(--g3));
+           transform-origin:right;transform:scaleX(0);
+           transition:transform .4s ease;pointer-events:none;display:none}
+#read-prog.on{display:block}
+
+/* ── WAKE LOCK INDICATOR ── */
+.wl-badge{position:fixed;bottom:82px;right:8px;background:linear-gradient(135deg,var(--g2),var(--g3));
+          color:#fff;font-size:.62rem;padding:4px 9px;border-radius:12px;z-index:9998;
+          display:none;box-shadow:0 2px 10px rgba(0,0,0,.35);pointer-events:none;
+          animation:wlpulse 3s ease-in-out infinite}
+.wl-badge.on{display:block}
+@keyframes wlpulse{0%,100%{opacity:1}50%{opacity:.65}}
+
+/* ── SHARE TOAST ── */
+.share-copied{background:var(--g2)!important}
+
+/* ── AUDIO PLAYER ── */
+.audio-wrap{background:rgba(0,0,0,.25);border-radius:12px;padding:12px;margin-top:6px}
+.audio-info{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.audio-surah{color:var(--au2);font-size:.82rem;font-weight:700;font-family:var(--far)}
+.audio-ayah-lbl{color:rgba(255,255,255,.5);font-size:.7rem}
+.audio-ctrl{display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:10px}
+.audio-btn{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.1);
+           border:1.5px solid rgba(255,255,255,.2);color:#fff;font-size:1rem;
+           cursor:pointer;display:flex;align-items:center;justify-content:center;
+           transition:all .18s}
+.audio-btn:hover{background:rgba(255,255,255,.2)}
+.audio-btn.play{width:48px;height:48px;background:linear-gradient(135deg,var(--au),var(--au2));
+               border-color:transparent;color:#1a1000;font-size:1.3rem}
+.audio-btn.play.active{background:linear-gradient(135deg,#c00,#e03333)}
+.audio-prog-wrap{background:rgba(255,255,255,.1);border-radius:4px;height:4px;cursor:pointer;margin-bottom:6px}
+.audio-prog{height:100%;background:linear-gradient(90deg,var(--au),var(--au2));border-radius:4px;
+            transition:width .3s;pointer-events:none}
+.reciter-sel{width:100%;padding:6px 10px;background:rgba(255,255,255,.08);
+             border:1.5px solid rgba(255,255,255,.15);color:#fff;border-radius:8px;
+             font-family:var(--fur);font-size:.76rem;outline:none;cursor:pointer}
+.reciter-sel option{background:#0a2d1a;color:#fff}
+.audio-loading{color:rgba(255,255,255,.45);font-size:.7rem;text-align:center;padding:4px 0;min-height:18px}
+/* ── PERMANENT AUDIO BAR ── */
+#audio-mini{
+  display:none;
+  flex-shrink:0;
+  background:linear-gradient(160deg,#071e11 0%,#0d3320 55%,#1a5c3a 100%);
+  border-top:2px solid var(--au2);
+  padding:5px 12px 8px;
+  z-index:350;flex-direction:column;gap:3px;
+  box-shadow:0 -4px 28px rgba(0,0,0,.6);
+}
+#audio-mini.on{display:flex}
+.mini-prog-wrap{height:3px;background:rgba(255,255,255,.12);border-radius:3px;cursor:pointer}
+.mini-prog{height:100%;background:linear-gradient(90deg,var(--au),var(--au2));
+           border-radius:3px;width:0%;transition:width .25s;pointer-events:none}
+.mini-row{display:flex;align-items:center;gap:8px}
+.mini-info{flex:1;min-width:0}
+.mini-surah{color:var(--au2);font-size:.8rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini-ayah{color:rgba(255,255,255,.45);font-size:.6rem}
+.mini-loading{color:rgba(255,255,255,.35);font-size:.6rem;min-height:12px}
+.mini-ctrl{display:flex;gap:5px;align-items:center;flex-shrink:0}
+.mini-btn{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.1);
+          border:1.5px solid rgba(255,255,255,.18);color:#fff;font-size:.9rem;
+          cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.mini-btn:active{transform:scale(.88)}
+.mini-btn.play{width:42px;height:42px;
+               background:linear-gradient(135deg,var(--au),var(--au2));
+               color:#1a1000;border:none;font-size:1.15rem;
+               box-shadow:0 2px 12px rgba(224,168,0,.4)}
+.mini-btn.play.active{background:linear-gradient(135deg,#a00,#d03);color:#fff;
+                      box-shadow:0 2px 12px rgba(200,0,0,.4)}
+.mini-reciter{flex-shrink:0;padding:4px 7px;background:rgba(255,255,255,.08);
+              border:1px solid rgba(255,255,255,.15);color:#fff;border-radius:7px;
+              font-family:var(--fur);font-size:.62rem;outline:none;cursor:pointer;max-width:115px}
+.mini-reciter option{background:#0a2d1a}
+
+/* ── AUDIO DOWNLOAD ── */
+.dl-wrap{background:rgba(0,0,0,.2);border-radius:10px;padding:10px;margin-top:8px}
+.dl-row{display:flex;align-items:center;gap:6px;margin-bottom:7px;flex-wrap:wrap}
+.dl-sel{flex:1;min-width:80px;padding:5px 8px;background:rgba(255,255,255,.08);
+        border:1px solid rgba(255,255,255,.15);color:#fff;border-radius:7px;
+        font-family:var(--fur);font-size:.72rem;outline:none;cursor:pointer}
+.dl-sel option{background:#0a2d1a}
+.dl-btn{padding:6px 12px;background:linear-gradient(135deg,var(--g2),var(--g3));
+        color:#fff;border:none;border-radius:8px;font-family:var(--fur);
+        font-size:.74rem;cursor:pointer;white-space:nowrap;transition:all .15s}
+.dl-btn:active{transform:scale(.95)}
+.dl-btn.red{background:linear-gradient(135deg,#7a1010,#b02020)}
+.dl-prog-wrap{height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;margin-bottom:5px}
+.dl-prog-bar{height:100%;background:linear-gradient(90deg,var(--au),var(--au2));
+             border-radius:3px;width:0%;transition:width .3s}
+.dl-status{font-size:.68rem;color:rgba(255,255,255,.5);min-height:16px;line-height:1.6}
+.dl-cached{font-size:.68rem;color:var(--g3);margin-top:3px}
+.dl-badge{display:inline-block;background:rgba(42,158,104,.25);color:var(--g3);
+          border:1px solid var(--g3);border-radius:10px;padding:1px 6px;
+          font-size:.58rem;margin-right:4px;vertical-align:middle}
+.pwa-install-btn{width:100%;padding:13px 16px;
+                 background:linear-gradient(135deg,#0d47a1,#1976d2,#42a5f5);
+                 color:#fff;border:none;border-radius:14px;font-family:var(--fur);
+                 font-size:.86rem;cursor:pointer;display:flex;align-items:center;
+                 gap:10px;margin-bottom:10px;font-weight:700;
+                 box-shadow:0 4px 18px rgba(25,118,210,.45);
+                 animation:pwa-pulse 2.5s ease-in-out infinite}
+@keyframes pwa-pulse{0%,100%{box-shadow:0 4px 18px rgba(25,118,210,.45)}
+                     50%{box-shadow:0 4px 28px rgba(25,118,210,.8),0 0 0 6px rgba(25,118,210,.15)}}
+.pwa-install-btn:active{transform:scale(.97)}
+.pwa-ios-hint{background:rgba(255,255,255,.07);border-radius:10px;padding:11px 13px;
+              font-size:.72rem;color:rgba(255,255,255,.65);line-height:2;border:1.5px solid rgba(255,255,255,.1)}
+.pwa-ios-hint b{color:var(--au2)}
+
+/* ── WHATSAPP SHARE ── */
+.wa-btn{background:linear-gradient(135deg,#128c7e,#25d366)!important;border:none!important;
+        color:#fff!important;font-weight:700}
+
+/* ── SCROLL MEMORY INDICATOR ── */
+.pg-pos-badge{display:inline-block;background:rgba(224,168,0,.18);color:var(--au2);
+              font-size:.6rem;padding:2px 6px;border-radius:8px;margin-right:6px}
+
+/* ── SCHEDULED MODE ── */
+.sched-wrap{background:rgba(0,0,0,.2);border-radius:10px;padding:10px;margin-top:8px}
+.sched-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.sched-lbl{color:rgba(255,255,255,.7);font-size:.76rem;flex:1}
+#sched-time{padding:6px 10px;border:2px solid rgba(255,255,255,.2);border-radius:8px;
+            background:rgba(255,255,255,.08);color:#fff;font-size:.85rem;font-family:var(--fur)}
+#sched-time:focus{outline:none;border-color:var(--au2)}
+.sched-days{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
+.sched-day{padding:4px 8px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.15);
+           color:rgba(255,255,255,.5);border-radius:20px;cursor:pointer;font-size:.68rem;
+           transition:all .15s;font-family:var(--fur)}
+.sched-day.on{background:rgba(224,168,0,.2);border-color:var(--au2);color:var(--au2)}
+#sched-status{color:rgba(255,255,255,.35);font-size:.68rem;margin-top:4px;min-height:16px}
+
+/* ── OFFSET PILL removed ── */
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .sb,.pgcw,.zc{display:none}
+  .bn{display:flex}
+  .pa{padding:8px 6px}
+}
+@media(min-width:769px){.mov,.md{display:none!important}}
+
+@keyframes glow{0%{box-shadow:0 0 0 0 rgba(224,168,0,.6)}70%{box-shadow:0 0 0 12px rgba(224,168,0,0)}100%{box-shadow:0 0 0 0}}
+.glow{animation:glow .8s ease-out}
+@keyframes fadeInPg{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:scale(1)}}
+#cv,#cv2{animation:fadeInPg .25s ease-out}
+
+/* ── THEMES ── */
+[data-theme="blue"]{--g1:#0a1a2d;--g2:#1b4a6b;--g3:#2a7a9e;--g4:#d4e8f0;--au:#c18e00;--au2:#e0a800}
+[data-theme="purple"]{--g1:#1a0a2d;--g2:#4a1b6b;--g3:#7a2a9e;--g4:#ead4f0;--au:#c18e00;--au2:#e0a800}
+[data-theme="maroon"]{--g1:#2d0a0a;--g2:#6b1b1b;--g3:#9e2a2a;--g4:#f0d4d4;--au:#c18e00;--au2:#e0a800}
+[data-theme="teal"]{--g1:#0a2d2a;--g2:#1b6b65;--g3:#2a9e96;--g4:#d4f0ee;--au:#c18e00;--au2:#e0a800}
+
+/* ── SEPIA MODE ── */
+body.sepia{--bg:#f5e6c3;--card:#fdf3de;--txt:#3d2508;--dim:#8c6840;--bdr:#d9c09a;--au3:#f5e6c3}
+body.sepia .pa{background:#f0deb0}
+body.sepia #cv,body.sepia #cv2{filter:sepia(.35) brightness(.96)}
+
+/* ── KIDS MODE ── */
+body.kids .bb{font-size:.85rem!important}
+body.kids .bb svg{width:30px!important;height:30px!important}
+body.kids .bn{height:90px!important}
+body.kids #cv,body.kids #cv2{border-radius:12px!important;border:4px solid var(--au2)!important}
+body.kids .top{height:62px!important;--tph:62px}
+
+/* ── FULLSCREEN ── */
+body.fs .top,body.fs .bn{display:none!important}
+body.fs .bmpanel,body.fs .toolpanel,body.fs .qjbar{display:none!important}
+body.fs .lay{position:fixed;inset:0;z-index:500}
+#fs-hint{display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+          background:rgba(0,0,0,.6);color:#fff;padding:8px 18px;border-radius:20px;
+          font-size:.76rem;z-index:600;pointer-events:none}
+body.fs #fs-hint{display:block}
+
+/* ── BRIGHTNESS OVERLAY ── */
+#bright-ov{position:fixed;inset:0;background:#000;pointer-events:none;
+           z-index:490;opacity:0;transition:opacity .2s}
+
+/* ── PIN LOCK ── */
+#pin-screen{display:none;position:fixed;inset:0;background:linear-gradient(160deg,var(--g1),#000);
+            z-index:9000;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+#pin-screen.on{display:flex}
+.pin-logo{font-size:3rem;margin-bottom:4px}
+.pin-title{color:var(--au2);font-size:1rem;font-weight:700}
+.pin-dots{display:flex;gap:12px;margin:4px 0}
+.pin-dot{width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.2);
+         border:2px solid rgba(255,255,255,.3);transition:all .15s}
+.pin-dot.fill{background:var(--au2);border-color:var(--au2)}
+.pin-pad{display:grid;grid-template-columns:repeat(3,72px);gap:10px}
+.pin-btn{height:68px;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);
+         color:#fff;border-radius:14px;font-size:1.4rem;font-weight:600;cursor:pointer;
+         font-family:var(--fur);transition:all .15s;display:flex;align-items:center;justify-content:center}
+.pin-btn:active{background:rgba(224,168,0,.3);border-color:var(--au2);transform:scale(.94)}
+.pin-err{color:#ff6b6b;font-size:.76rem;min-height:20px;text-align:center}
+.pin-sub{color:rgba(255,255,255,.35);font-size:.7rem;cursor:pointer;text-decoration:underline}
+
+/* ── STATS MODAL ── */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.stat-card{background:var(--g4);border-radius:12px;padding:12px 10px;text-align:center;
+           border:1.5px solid var(--g3)}
+.dk .stat-card{background:#0d1f16;border-color:var(--g3)}
+.stat-val{font-size:1.6rem;font-weight:700;color:var(--g2);line-height:1.1}
+.dk .stat-val{color:var(--g3)}
+.stat-lbl{font-size:.68rem;color:var(--dim);margin-top:3px}
+.stat-streak{grid-column:1/-1;background:linear-gradient(135deg,var(--g1),var(--g2));
+             border-color:var(--au2)}
+.stat-streak .stat-val{color:var(--au2);font-size:2rem}
+.stat-streak .stat-lbl{color:rgba(255,255,255,.6)}
+.goal-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.goal-inp{flex:1;padding:8px 12px;border:2px solid var(--bdr);border-radius:8px;
+          background:var(--bg);color:var(--txt);font-size:.9rem;text-align:center;font-family:var(--fur)}
+.goal-inp:focus{outline:none;border-color:var(--au2)}
+.goal-bar-wrap{background:var(--bdr);border-radius:8px;height:10px;overflow:hidden;margin-bottom:6px}
+.goal-bar{height:100%;background:linear-gradient(90deg,var(--g3),var(--au2));
+          border-radius:8px;transition:width .4s ease;min-width:4px}
+.goal-pct{font-size:.74rem;color:var(--g3);text-align:center}
+.dk .goal-pct{color:var(--g3)}
+.reminder-row{display:flex;align-items:center;gap:10px;padding:8px 0}
+.reminder-t{flex:1;color:var(--txt);font-size:.8rem}
+#rem-time{padding:7px 12px;border:2px solid var(--bdr);border-radius:8px;
+          background:var(--bg);color:var(--txt);font-size:.88rem;font-family:var(--fur)}
+#rem-time:focus{outline:none;border-color:var(--au2)}
+
+/* ── AUTO SCROLL ── */
+.as-row{display:flex;align-items:center;gap:8px}
+#as-speed{flex:1;-webkit-appearance:none;height:5px;border-radius:3px;
+           background:rgba(255,255,255,.2);outline:none}
+#as-speed::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;
+  border-radius:50%;background:var(--g3);cursor:pointer}
+.as-btn{padding:5px 14px;background:var(--g3);color:#fff;border:none;
+        border-radius:8px;font-family:var(--fur);font-size:.76rem;cursor:pointer}
+
+/* ── SLEEP TIMER ── */
+.st-presets{display:flex;gap:6px;flex-wrap:wrap}
+.st-btn{padding:6px 14px;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);
+        color:rgba(255,255,255,.7);border-radius:20px;cursor:pointer;font-size:.74rem;
+        font-family:var(--fur);transition:all .15s}
+.st-btn:hover{background:rgba(255,255,255,.16);color:#fff}
+.st-btn.on{background:rgba(224,168,0,.25);border-color:var(--au2);color:var(--au2)}
+#st-lbl{color:rgba(255,255,255,.4);font-size:.7rem;margin-top:6px;min-height:16px}
+
+/* ── THEME SWATCHES ── */
+.theme-swatches{display:flex;gap:8px;flex-wrap:wrap;padding:4px 0}
+.tsw{width:34px;height:34px;border-radius:50%;cursor:pointer;border:3px solid transparent;
+     transition:all .2s;display:flex;align-items:center;justify-content:center}
+.tsw.on{border-color:var(--au2);transform:scale(1.15)}
+.tsw span{width:26px;height:26px;border-radius:50%;display:block}
+
+/* ── SHARE/EXPORT BUTTONS ── */
+.act-btn{width:100%;padding:10px 14px;background:rgba(255,255,255,.07);
+         border:1.5px solid rgba(255,255,255,.12);color:#fff;border-radius:10px;
+         font-family:var(--fur);font-size:.8rem;cursor:pointer;text-align:right;
+         display:flex;align-items:center;gap:8px;margin-bottom:6px;transition:background .15s}
+.act-btn:hover{background:rgba(255,255,255,.14)}
+.act-btn svg{opacity:.7;flex-shrink:0}
+
+
+/* ── QUICK JUMP BAR ── */
+.qjbar{display:none;position:fixed;top:var(--tph);left:0;right:0;
+       background:linear-gradient(180deg,rgba(10,45,26,.97),rgba(10,45,26,.9));
+       padding:10px 16px 12px;z-index:280;border-bottom:2px solid var(--au2);
+       box-shadow:0 6px 20px rgba(0,0,0,.4)}
+.qjbar.on{display:block}
+.qjbar-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.qjlbl{color:rgba(255,255,255,.6);font-size:.7rem;display:flex;align-items:center;gap:8px}
+.qjlbl span{color:var(--au2);font-weight:700;font-size:.8rem}
+.qjx{background:rgba(255,255,255,.12);border:none;color:#fff;width:24px;height:24px;
+     border-radius:50%;cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center}
+#qjslider{width:100%;-webkit-appearance:none;height:6px;border-radius:3px;
+          background:rgba(255,255,255,.2);outline:none}
+#qjslider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;
+  border-radius:50%;background:var(--au2);cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+#qjslider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;
+  background:var(--au2);cursor:pointer;border:none}
+/* push layout down when QJ bar is open */
+.lay.qjopen{margin-top:72px}
+
+/* ── TOOLS PANEL ── */
+.toolpanel{display:none;position:fixed;bottom:76px;left:0;right:0;
+           background:var(--g1);border-top:2px solid var(--g3);
+           z-index:350;max-height:70vh;overflow-y:auto;
+           box-shadow:0 -8px 30px rgba(0,0,0,.5)}
+.toolpanel.on{display:block}
+.toolpanel::-webkit-scrollbar{width:3px}
+.toolpanel::-webkit-scrollbar-thumb{background:var(--g3);border-radius:2px}
+.tphd{display:flex;align-items:center;justify-content:space-between;
+      padding:10px 14px 8px;border-bottom:1px solid rgba(255,255,255,.1)}
+.tphd-t{color:var(--g3);font-size:.82rem;font-weight:600}
+.tphd-x{background:rgba(255,255,255,.1);border:none;color:#fff;
+         width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:.9rem}
+.tpsec{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.06)}
+.tpsec-t{color:rgba(255,255,255,.5);font-size:.66rem;font-weight:600;
+         text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.tprow{display:flex;align-items:center;justify-content:space-between;
+       padding:7px 0;gap:10px}
+.tprow-lbl{color:#fff;font-size:.78rem;display:flex;align-items:center;gap:7px}
+.tprow-lbl svg{opacity:.7}
+/* Toggle switch */
+.tgl{position:relative;width:42px;height:24px;flex-shrink:0}
+.tgl input{opacity:0;width:0;height:0;position:absolute}
+.tgl-sl{position:absolute;inset:0;background:rgba(255,255,255,.15);
+         border-radius:12px;cursor:pointer;transition:background .2s}
+.tgl-sl:before{content:'';position:absolute;width:18px;height:18px;
+               left:3px;top:3px;background:#fff;border-radius:50%;transition:transform .2s}
+.tgl input:checked+.tgl-sl{background:var(--g3)}
+.tgl input:checked+.tgl-sl:before{transform:translateX(18px)}
+/* Font size row */
+.fsrow{display:flex;align-items:center;gap:8px}
+.fsb{width:32px;height:32px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);
+     color:#fff;border-radius:8px;font-size:1.1rem;font-weight:700;cursor:pointer;
+     display:flex;align-items:center;justify-content:center;transition:background .15s}
+.fsb:active{background:rgba(255,255,255,.25)}
+#fslbl{color:var(--au2);font-size:.8rem;min-width:26px;text-align:center;font-weight:700}
+/* History list */
+.hrow{display:flex;align-items:center;gap:8px;padding:7px 10px;
+      border-radius:10px;margin-bottom:3px;cursor:pointer;
+      background:rgba(255,255,255,.04);transition:background .15s}
+.hrow:hover{background:rgba(255,255,255,.1)}
+.hrow-pg{color:#fff;font-size:.78rem;font-weight:600;min-width:36px}
+.hrow-lbl{color:rgba(255,255,255,.45);font-size:.66rem;flex:1}
+.hrow-t{color:rgba(255,255,255,.22);font-size:.6rem;white-space:nowrap}
+/* Note area */
+#note-ta{width:100%;height:90px;background:rgba(255,255,255,.07);
+          border:1.5px solid rgba(255,255,255,.14);border-radius:10px;
+          color:#fff;font-family:var(--fur);font-size:.8rem;padding:9px 11px;
+          resize:none;outline:none;line-height:1.8}
+#note-ta:focus{border-color:var(--au2)}
+.note-btns{display:flex;gap:6px;margin-top:6px}
+.note-save{padding:7px 18px;background:linear-gradient(135deg,var(--g2),var(--g3));
+           color:#fff;border:none;border-radius:10px;font-family:var(--fur);
+           font-size:.78rem;cursor:pointer}
+.note-del{padding:7px 14px;background:rgba(255,0,0,.12);border:1px solid rgba(255,80,80,.2);
+          color:#ff8080;border-radius:10px;font-family:var(--fur);font-size:.78rem;cursor:pointer}
+/* Note indicator on page */
+.note-dot{position:fixed;top:calc(var(--tph)+8px);left:8px;
+          background:var(--au);color:#1a1000;font-size:.66rem;font-weight:700;
+          padding:4px 8px;border-radius:10px;cursor:pointer;z-index:250;
+          display:none;box-shadow:0 2px 8px rgba(0,0,0,.3);border:none;
+          font-family:var(--fur)}
+.note-dot.on{display:block}
+/* Thumbnail strip */
+.thumbstrip{display:none;flex-direction:row;gap:6px;padding:8px 14px;
+            overflow-x:auto;background:rgba(0,0,0,.15);
+            border-top:1px solid rgba(255,255,255,.05)}
+.thumbstrip::-webkit-scrollbar{height:3px}
+.thumbstrip::-webkit-scrollbar-thumb{background:var(--g3);border-radius:2px}
+.thumbstrip.on{display:flex}
+.thumb{flex-shrink:0;cursor:pointer;border-radius:4px;overflow:hidden;
+       border:2px solid transparent;transition:border-color .15s}
+.thumb.act{border-color:var(--au2)}
+.thumb canvas{width:60px;height:80px;display:block;background:#fff}
+.thumb-pg{text-align:center;color:rgba(255,255,255,.5);font-size:.58rem;padding:2px 0}
+
+</style>
+</head>
+<body>
+
+<!-- READING PROGRESS BAR -->
+<div id="read-prog"></div>
+
+<!-- WAKE LOCK BADGE -->
+<div class="wl-badge" id="wl-badge">📺 اسکرین آن</div>
+
+<!-- TOPBAR -->
+<div class="top">
+  <button class="tb" onclick="if(window.innerWidth<=768)openMob('s');else deskToggle()">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+    </svg>فہرست
+  </button>
+  <label class="tb g" for="pfi">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/>
+      <line x1="12" y1="3" x2="12" y2="15"/>
+    </svg>PDF لوڈ
+  </label>
+  <input type="file" id="pfi" accept=".pdf" style="display:none" onchange="readPDF(this)">
+  <span class="tt" id="tbtitle">القرآن الکریم</span>
+  <div class="pgc pgcw" id="pgc" style="display:none">
+    <button id="btnp" onclick="chPg(-1)" disabled>&#8250;</button>
+    <input type="number" id="pgi" min="1" value="1" onchange="goPgInp()">
+    <button id="btnn" onclick="chPg(1)" disabled>&#8249;</button>
+    <span class="pgof" id="pgof">/ 0</span>
+  </div>
+  <button class="tb ic" onclick="openMod()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>
+    </svg>
+  </button>
+  <button class="tb ic" onclick="togDk()" id="dkbtn">
+    <svg id="dkico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+  </button>
+  <button class="tb ic" onclick="togSepia()" id="sepiabtn" title="سیپیا موڈ">
+    <svg id="sepiaico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="5"/>
+      <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+      <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    </svg>
+  </button>
+  <button class="tb ic" onclick="togFS()" id="fsbtn" title="فل اسکرین">
+    <svg id="fsico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/>
+      <line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
+    </svg>
+  </button>
+  <button class="tb ic" onclick="openStats()" title="اعداد و شمار">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/>
+      <line x1="6" y1="20" x2="6" y2="14"/>
+    </svg>
+  </button>
+</div>
+
+<!-- BRIGHTNESS OVERLAY -->
+<div id="bright-ov"></div>
+
+<!-- FULLSCREEN HINT -->
+<div id="fs-hint">دو بار ٹیپ کریں یا اوپر سوائپ کریں — باہر نکلیں</div>
+
+<!-- PIN LOCK SCREEN -->
+<div id="pin-screen">
+  <div class="pin-logo">🔒</div>
+  <div class="pin-title">پن کوڈ درج کریں</div>
+  <div class="pin-dots" id="pin-dots">
+    <div class="pin-dot" id="pd0"></div>
+    <div class="pin-dot" id="pd1"></div>
+    <div class="pin-dot" id="pd2"></div>
+    <div class="pin-dot" id="pd3"></div>
+  </div>
+  <div class="pin-err" id="pin-err"></div>
+  <div class="pin-pad">
+    <button class="pin-btn" onclick="pinKey(1)">۱</button>
+    <button class="pin-btn" onclick="pinKey(2)">۲</button>
+    <button class="pin-btn" onclick="pinKey(3)">۳</button>
+    <button class="pin-btn" onclick="pinKey(4)">۴</button>
+    <button class="pin-btn" onclick="pinKey(5)">۵</button>
+    <button class="pin-btn" onclick="pinKey(6)">۶</button>
+    <button class="pin-btn" onclick="pinKey(7)">۷</button>
+    <button class="pin-btn" onclick="pinKey(8)">۸</button>
+    <button class="pin-btn" onclick="pinKey(9)">۹</button>
+    <button class="pin-btn" onclick="pinKey('del')" style="font-size:.9rem">⌫</button>
+    <button class="pin-btn" onclick="pinKey(0)">۰</button>
+    <button class="pin-btn" onclick="pinKey('ok')" style="background:rgba(224,168,0,.2);border-color:var(--au2);color:var(--au2)">✓</button>
+  </div>
+  <span class="pin-sub" onclick="pinReset()">پن بھول گئے؟ ہٹائیں</span>
+</div>
+
+<!-- QUICK JUMP BAR -->
+<div class="qjbar" id="qjbar">
+  <div class="qjbar-top">
+    <div class="qjlbl">صفحہ بدلیں &nbsp;<span id="qjval">1 / 1</span></div>
+    <button class="qjx" onclick="closeQJ()">✕</button>
+  </div>
+  <input type="range" id="qjslider" min="1" max="1" value="1"
+         oninput="onQJ(this.value)" onchange="doQJ(this.value)">
+</div>
+
+<!-- NOTE DOT -->
+<button class="note-dot" id="notedot" onclick="openTools('note')">📝 نوٹ</button>
+
+<!-- LAYOUT -->
+<div class="lay">
+
+  <!-- Desktop Sidebar -->
+  <div class="sb" id="dsb">
+    <div class="sbh">
+      <div class="sbl">
+        <div class="sbi">📖</div>
+        <div><span class="t1">القرآن الکریم</span><span class="t2">۶۰۴ صفحات</span></div>
+      </div>
+      <input type="text" class="sbs" id="sbsr" placeholder="سورۃ تلاش کریں..." oninput="filS()">
+    </div>
+    <div class="stabs">
+      <div class="stab on" onclick="swTab('s',this)">📋 سورتیں (۱۱۴)</div>
+      <div class="stab" onclick="swTab('p',this)">📚 پارے (۳۰)</div>
+    </div>
+    <div class="sbb"><div class="tp on" id="tps"></div><div class="tp" id="tpp"></div></div>
+  </div>
+
+  <!-- PDF Area -->
+  <div class="pa" id="pa">
+
+    <!-- Upload -->
+    <div class="upz" id="upz">
+      <div class="dbox" id="dbox"
+           ondragover="dov(event)" ondragleave="dol()" ondrop="doDrop(event)"
+           onclick="document.getElementById('pfi').click()">
+        <div class="dico">📂</div>
+        <p class="dt1">القرآن الکریم PDF یہاں لوڈ کریں</p>
+        <p class="dt2">فائل ڈراپ کریں یا بٹن دبائیں</p>
+        <button class="dbtn" onclick="event.stopPropagation();document.getElementById('pfi').click()">
+          📄 PDF منتخب کریں
+        </button>
+      </div>
+      <div class="cbanner" id="cbn" onclick="loadCached()">
+        📁 <span id="cbnname">پہلی PDF دوبارہ کھولیں</span>
+      </div>
+      <div style="background:var(--g4);border-right:3px solid var(--g3);border-radius:10px;padding:10px 13px;font-size:.74rem;color:var(--g2);line-height:2;width:100%;max-width:480px;text-align:right">
+        <strong>📱 استعمال:</strong><br>
+        ۱. PDF لوڈ کریں — اگلی بار خودبخود کھلے گی<br>
+        ۲. پہلی بار لوڈ پر <b>سورۃ الفاتحہ کا صفحہ نمبر</b> بتائیں<br>
+        ۳. پھر سورۃ / رکوع / آیت پر کلک کریں — سیدھا وہ صفحہ کھلے گا<br>
+        ۴. ⚙️ بٹن سے کسی وقت بھی صفحہ درست کر سکتے ہیں
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="ldg" id="ldg"><div class="sp"></div><p class="lt" id="ltxt">لوڈ ہو رہی ہے...</p></div>
+
+    <!-- Calibration box (shown after first PDF load before surah nav) -->
+    <div class="calbox" id="calbox">
+      <div class="cal-title">📐 پہلی بار ترتیب دیں</div>
+      <div class="cal-desc">
+        آپ کی PDF میں <b>سورۃ الفاتحہ (پہلی سورۃ)</b> کس صفحہ پر ہے؟<br>
+        وہ صفحہ نمبر لکھیں جو آپ کی PDF میں نظر آتا ہے۔<br>
+        (نوٹ: اس قرآن کریم میں سورۃ الفاتحہ صفحہ ۱ پر ہے)
+      </div>
+      <div class="cal-row">
+        <span class="cal-lbl">سورۃ الفاتحہ کا صفحہ:</span>
+        <input type="number" id="cal-inp" value="1" min="1" placeholder="مثلاً 13">
+        <button class="cal-apply" onclick="applyCalib()">✓ ٹھیک کریں</button>
+      </div>
+      <div class="cal-result" id="cal-res"></div>
+    </div>
+
+    <!-- Canvas -->
+    <div class="cw" id="cw">
+      <div id="dbl-wrap" style="display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start;justify-content:center;width:100%">
+        <canvas id="cv" style="max-width:100%;box-shadow:0 6px 36px rgba(0,0,0,.2);border-radius:5px;background:#fff;display:block"></canvas>
+        <canvas id="cv2" style="display:none;max-width:100%;box-shadow:0 6px 36px rgba(0,0,0,.2);border-radius:5px;background:#fff;"></canvas>
+      </div>
+      <div class="thumbstrip" id="thumbstrip"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PERMANENT AUDIO BAR (between content and bottom-nav) -->
+<div id="audio-mini">
+  <div class="mini-prog-wrap" id="mini-prog-wrap" onclick="seekAudio(event)">
+    <div class="mini-prog" id="mini-prog"></div>
+  </div>
+  <div class="mini-row">
+    <div class="mini-info">
+      <div class="mini-surah" id="mini-surah-lbl">PDF لوڈ کریں</div>
+      <div class="mini-ayah" id="mini-ayah-lbl">آیت —</div>
+      <div class="mini-loading" id="mini-loading"></div>
+    </div>
+    <div class="mini-ctrl">
+      <button class="mini-btn" onclick="audioPrev()" title="پچھلی آیت">⏮</button>
+      <button class="mini-btn" onclick="audioJump(-5)" title="-5">↩</button>
+      <button class="mini-btn play" id="mini-play-btn" onclick="toggleAudio()">▶</button>
+      <button class="mini-btn" onclick="audioJump(5)" title="+5">↪</button>
+      <button class="mini-btn" onclick="audioNext()" title="اگلی آیت">⏭</button>
+    </div>
+    <select class="mini-reciter" id="mini-reciter-sel" onchange="changeReciter(this.value)">
+      <option value="Abdul_Basit_Murattal_64kbps">عبدالباسط</option>
+      <option value="Alafasy_64kbps">العفاسی</option>
+      <option value="Abdurrahmaan_As-Sudais_192kbps">السدیس</option>
+      <option value="Abdullah_Basfar_192kbps">بصفر</option>
+    </select>
+  </div>
+</div>
+
+<!-- TOOLS PANEL -->
+<div class="toolpanel" id="toolpanel">
+  <div class="tphd">
+    <span class="tphd-t">🛠️ ابزار و ترتیبات</span>
+    <button class="tphd-x" onclick="closeTools()">✕</button>
+  </div>
+
+  <!-- VIEW OPTIONS -->
+  <div class="tpsec">
+    <div class="tpsec-t">📺 نمائش</div>
+    <div class="tprow">
+      <span class="tprow-lbl"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="8" height="18" rx="1"/><rect x="13" y="3" width="8" height="18" rx="1"/></svg>ڈبل صفحہ</span>
+      <label class="tgl"><input type="checkbox" id="dbl-tgl" onchange="toggleDblPage(this.checked)"><span class="tgl-sl"></span></label>
+    </div>
+    <div class="tprow">
+      <span class="tprow-lbl"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 .49-3.29"/></svg>اسکرین روٹیٹ</span>
+      <label class="tgl"><input type="checkbox" id="rot-tgl" onchange="toggleRotate()"><span class="tgl-sl"></span></label>
+    </div>
+    <div class="tprow">
+      <span class="tprow-lbl"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="4" rx="1"/><rect x="3" y="9" width="18" height="4" rx="1"/><rect x="3" y="15" width="18" height="4" rx="1"/></svg>تھمب نیل</span>
+      <label class="tgl"><input type="checkbox" id="thumb-tgl" onchange="toggleThumbs(this.checked)"><span class="tgl-sl"></span></label>
+    </div>
+    <div class="tprow">
+      <span class="tprow-lbl"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/></svg>صفحہ سلائیڈر</span>
+      <label class="tgl"><input type="checkbox" id="qj-tgl" onchange="toggleQJ(this.checked)"><span class="tgl-sl"></span></label>
+    </div>
+    <div class="tprow">
+      <span class="tprow-lbl"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>فل اسکرین</span>
+      <label class="tgl"><input type="checkbox" id="fs-tgl" onchange="togFS()"><span class="tgl-sl"></span></label>
+    </div>
+    <div class="tprow">
+      <span class="tprow-lbl">🧒 بچوں کا موڈ</span>
+      <label class="tgl"><input type="checkbox" id="kids-tgl" onchange="togKids(this.checked)"><span class="tgl-sl"></span></label>
+    </div>
+    <div class="tprow">
+      <span class="tprow-lbl">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        اسکرین آن رکھیں
+        <span style="font-size:.58rem;color:rgba(255,255,255,.38);display:block;margin-top:1px">مطالعہ کے دوران اسکرین بند نہ ہو</span>
+      </span>
+      <label class="tgl"><input type="checkbox" id="wl-tgl" onchange="toggleWakeLock(this.checked)"><span class="tgl-sl"></span></label>
+    </div>
+    <div class="tprow">
+      <span class="tprow-lbl">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        پڑھنے کی پٹی
+        <span style="font-size:.58rem;color:rgba(255,255,255,.38);display:block;margin-top:1px">اوپر رنگین پروگریس بار</span>
+      </span>
+      <label class="tgl"><input type="checkbox" id="prog-tgl" onchange="toggleProgBar(this.checked)" checked><span class="tgl-sl"></span></label>
+    </div>
+  </div>
+
+  <!-- BRIGHTNESS -->
+  <div class="tpsec">
+    <div class="tpsec-t">☀️ روشنی</div>
+    <div class="tprow">
+      <span class="tprow-lbl" style="min-width:40px">☀️</span>
+      <input type="range" id="bright-sl" min="0" max="70" value="0" style="flex:1;-webkit-appearance:none;height:5px;border-radius:3px;background:rgba(255,255,255,.2);outline:none" oninput="setBright(this.value)">
+      <span id="bright-lbl" style="color:var(--au2);font-size:.76rem;min-width:32px;text-align:center">0%</span>
+    </div>
+  </div>
+
+  <!-- FONT SIZE -->
+  <div class="tpsec">
+    <div class="tpsec-t">🔤 فونٹ سائز</div>
+    <div class="tprow">
+      <span class="tprow-lbl"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>حجم</span>
+      <div class="fsrow">
+        <button class="fsb" onclick="chFS(-1)">−</button>
+        <span id="fslbl">100%</span>
+        <button class="fsb" onclick="chFS(1)">+</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUTO SCROLL -->
+  <div class="tpsec">
+    <div class="tpsec-t">⏩ آٹو اسکرول</div>
+    <div class="tprow">
+      <span class="tprow-lbl">رفتار</span>
+      <div class="as-row" style="flex:1;gap:8px;margin-right:8px">
+        <input type="range" id="as-speed" min="1" max="10" value="3">
+        <span id="as-lbl" style="color:var(--au2);font-size:.74rem;min-width:16px">3</span>
+      </div>
+      <button class="as-btn" id="as-btn" onclick="toggleAS()">شروع</button>
+    </div>
+  </div>
+
+  <!-- SLEEP TIMER -->
+  <div class="tpsec">
+    <div class="tpsec-t">😴 سلیپ ٹائمر</div>
+    <div class="st-presets">
+      <button class="st-btn" onclick="setST(15)">۱۵ منٹ</button>
+      <button class="st-btn" onclick="setST(30)">۳۰ منٹ</button>
+      <button class="st-btn" onclick="setST(60)">۱ گھنٹہ</button>
+      <button class="st-btn" onclick="setST(0)">بند</button>
+    </div>
+    <div id="st-lbl">سلیپ ٹائمر بند ہے</div>
+  </div>
+
+  <!-- THEME -->
+  <div class="tpsec">
+    <div class="tpsec-t">🎨 تھیم</div>
+    <div class="theme-swatches">
+      <div class="tsw on" id="th-green" onclick="setTheme('')" title="سبز"><span style="background:linear-gradient(135deg,#0a2d1a,#2a9e68)"></span></div>
+      <div class="tsw" id="th-blue" onclick="setTheme('blue')" title="نیلا"><span style="background:linear-gradient(135deg,#0a1a2d,#2a7a9e)"></span></div>
+      <div class="tsw" id="th-purple" onclick="setTheme('purple')" title="بنفشہ"><span style="background:linear-gradient(135deg,#1a0a2d,#7a2a9e)"></span></div>
+      <div class="tsw" id="th-maroon" onclick="setTheme('maroon')" title="گہرا سرخ"><span style="background:linear-gradient(135deg,#2d0a0a,#9e2a2a)"></span></div>
+      <div class="tsw" id="th-teal" onclick="setTheme('teal')" title="فیروزی"><span style="background:linear-gradient(135deg,#0a2d2a,#2a9e96)"></span></div>
+    </div>
+  </div>
+
+  <!-- NOTES -->
+  <div class="tpsec" id="note-sec">
+    <div class="tpsec-t">📝 نوٹ — ص <span id="note-pg-lbl">—</span></div>
+    <textarea id="note-ta" placeholder="اس صفحے کے لیے نوٹ لکھیں..."></textarea>
+    <div class="note-btns">
+      <button class="note-save" onclick="saveNote()">💾 محفوظ</button>
+      <button class="note-del" onclick="delNote()">🗑️ ہٹائیں</button>
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="tpsec">
+    <div class="tpsec-t">🕘 حالیہ صفحات</div>
+    <div id="histlist"></div>
+  </div>
+
+  <!-- SHARE & EXPORT -->
+  <div class="tpsec">
+    <div class="tpsec-t">📤 شیئر و برآمد</div>
+    <button class="act-btn" onclick="sharePg()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      موجودہ صفحہ شیئر کریں
+    </button>
+    <button class="act-btn" onclick="exportNotes()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      تمام نوٹس برآمد کریں (TXT)
+    </button>
+    <button class="act-btn" onclick="openStats()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      پڑھنے کی پیشرفت دیکھیں
+    </button>
+  </div>
+
+  <!-- SECURITY -->
+  <div class="tpsec">
+    <div class="tpsec-t">🔐 سیکیورٹی</div>
+    <div class="tprow">
+      <span class="tprow-lbl">🔒 پن لاک</span>
+      <label class="tgl"><input type="checkbox" id="pin-tgl" onchange="togglePinSetup(this.checked)"><span class="tgl-sl"></span></label>
+    </div>
+    <div id="pin-setup-area" style="display:none;margin-top:8px">
+      <div style="color:rgba(255,255,255,.5);font-size:.72rem;margin-bottom:6px">نیا ۴ ہندسہ پن درج کریں:</div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <input type="password" id="new-pin" maxlength="4" placeholder="۰۰۰۰"
+          style="width:80px;padding:8px;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.2);
+          color:#fff;border-radius:8px;font-size:1.1rem;text-align:center;font-family:var(--fur);outline:none">
+        <button class="as-btn" onclick="savePin()">محفوظ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- REMINDER -->
+  <div class="tpsec">
+    <div class="tpsec-t">🔔 روزانہ یاددہانی</div>
+    <div class="reminder-row">
+      <span class="reminder-t">پڑھنے کا وقت</span>
+      <input type="time" id="rem-time" value="06:00">
+      <button class="as-btn" onclick="setReminder()">لگائیں</button>
+    </div>
+    <div id="rem-lbl" style="color:rgba(255,255,255,.35);font-size:.7rem;margin-top:4px"></div>
+  </div>
+
+  <!-- SCHEDULED READING MODE -->
+  <div class="tpsec">
+    <div class="tpsec-t">🌙 مقررہ مطالعہ موڈ</div>
+    <div class="sched-wrap">
+      <div class="sched-row">
+        <span class="sched-lbl">شروع وقت</span>
+        <input type="time" id="sched-time" value="05:00">
+        <button class="as-btn" onclick="saveSchedule()">محفوظ</button>
+      </div>
+      <div class="tprow-lbl" style="color:rgba(255,255,255,.5);font-size:.68rem;margin-bottom:6px">دن منتخب کریں:</div>
+      <div class="sched-days">
+        <span class="sched-day" data-d="0" onclick="toggleSchedDay(this)">اتوار</span>
+        <span class="sched-day on" data-d="1" onclick="toggleSchedDay(this)">پیر</span>
+        <span class="sched-day on" data-d="2" onclick="toggleSchedDay(this)">منگل</span>
+        <span class="sched-day on" data-d="3" onclick="toggleSchedDay(this)">بدھ</span>
+        <span class="sched-day on" data-d="4" onclick="toggleSchedDay(this)">جمعرات</span>
+        <span class="sched-day" data-d="5" onclick="toggleSchedDay(this)">جمعہ</span>
+        <span class="sched-day" data-d="6" onclick="toggleSchedDay(this)">ہفتہ</span>
+      </div>
+      <div class="tprow">
+        <span class="tprow-lbl" style="font-size:.74rem">خودبخود اسکرین آن + آخری صفحہ کھولیں</span>
+        <label class="tgl"><input type="checkbox" id="sched-auto-tgl"><span class="tgl-sl"></span></label>
+      </div>
+      <div id="sched-status"></div>
+    </div>
+  </div>
+
+  <!-- AUDIO RECITATION -->
+  <div class="tpsec">
+    <div class="tpsec-t">🔊 آڈیو تلاوت</div>
+    <select class="reciter-sel" id="reciter-sel" onchange="changeReciter(this.value)">
+      <option value="Abdul_Basit_Murattal_64kbps">عبدالباسط — مرتّل</option>
+      <option value="Alafasy_64kbps">مشاری العفاسی</option>
+      <option value="Abdurrahmaan_As-Sudais_192kbps">عبدالرحمن السدیس</option>
+      <option value="Abdullah_Basfar_192kbps">عبداللہ بصفر</option>
+    </select>
+    <div class="audio-wrap">
+      <div class="audio-info">
+        <span class="audio-surah" id="audio-surah-lbl">PDF لوڈ کریں</span>
+        <span class="audio-ayah-lbl" id="audio-ayah-lbl">آیت —</span>
+      </div>
+      <div class="audio-ctrl">
+        <button class="audio-btn" onclick="audioPrev()" title="پچھلی آیت">⏮</button>
+        <button class="audio-btn" onclick="audioJump(-5)" title="-5 آیات">↩ 5</button>
+        <button class="audio-btn play" id="audio-play-btn" onclick="toggleAudio()">▶</button>
+        <button class="audio-btn" onclick="audioJump(5)" title="+5 آیات">5 ↪</button>
+        <button class="audio-btn" onclick="audioNext()" title="اگلی آیت">⏭</button>
+      </div>
+      <div class="audio-prog-wrap" id="audio-prog-wrap" onclick="seekAudio(event)">
+        <div class="audio-prog" id="audio-prog" style="width:0%"></div>
+      </div>
+      <div class="audio-loading" id="audio-loading"></div>
+      <div class="tprow" style="margin-top:4px">
+        <span class="tprow-lbl" style="font-size:.74rem">صفحہ بدلنے پر خودبخود تلاوت</span>
+        <label class="tgl"><input type="checkbox" id="audio-auto-tgl"><span class="tgl-sl"></span></label>
+      </div>
+    </div>
+    <audio id="audio-el"></audio>
+  </div>
+
+  <!-- AUDIO DOWNLOAD -->
+  <div class="tpsec">
+    <div class="tpsec-t">⬇ آف لائن آڈیو</div>
+    <div class="dl-wrap">
+
+      <!-- LOCAL LOAD -->
+      <div style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.1)">
+        <div style="color:rgba(255,255,255,.6);font-size:.72rem;margin-bottom:6px">
+          📂 اپنی MP3 فائلیں لوڈ کریں<br>
+          <span style="color:rgba(255,255,255,.35);font-size:.65rem">فارمیٹ: 001001.mp3 یا surah_ayah.mp3</span>
+        </div>
+        <label class="dl-btn" style="display:inline-block;cursor:pointer">
+          📂 فائلیں منتخب کریں
+          <input type="file" id="local-audio-inp" accept=".mp3,audio/*" multiple style="display:none" onchange="loadLocalAudio(this)">
+        </label>
+        <div class="dl-prog-wrap" id="local-prog-wrap" style="display:none;margin-top:6px">
+          <div class="dl-prog-bar" id="local-prog-bar"></div>
+        </div>
+        <div class="dl-status" id="local-status"></div>
+      </div>
+
+      <!-- DOWNLOAD -->
+      <div style="color:rgba(255,255,255,.6);font-size:.72rem;margin-bottom:6px">🌐 انٹرنیٹ سے ڈاؤنلوڈ کریں</div>
+      <div class="dl-row">
+        <select class="dl-sel" id="dl-surah-from">
+          <option value="">سورۃ — شروع</option>
+        </select>
+        <select class="dl-sel" id="dl-surah-to">
+          <option value="">سورۃ — آخر</option>
+        </select>
+      </div>
+      <div class="dl-row">
+        <button class="dl-btn" onclick="startDownload()">⬇ ڈاؤنلوڈ کریں</button>
+        <button class="dl-btn" onclick="downloadCurrentSurah()">موجودہ سورۃ</button>
+        <button class="dl-btn red" onclick="clearAudioCache()">🗑 کیش خالی</button>
+      </div>
+      <div class="dl-prog-wrap" id="dl-prog-wrap" style="display:none">
+        <div class="dl-prog-bar" id="dl-prog-bar"></div>
+      </div>
+      <div class="dl-status" id="dl-status"></div>
+      <div class="dl-cached" id="dl-cached-info"></div>
+    </div>
+  </div>
+  <div class="tpsec" id="pwa-sec">
+    <div class="tpsec-t">📱 ایپ انسٹال کریں</div>
+
+    <!-- Primary install button — shown when beforeinstallprompt fires -->
+    <button class="pwa-install-btn" id="pwa-install-btn" onclick="pwaInstall()" style="display:none">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      ہوم اسکرین پر انسٹال کریں
+    </button>
+
+    <!-- Android manual fallback (shown if prompt not available) -->
+    <div id="pwa-android-manual" style="display:none;background:rgba(255,255,255,.06);border-radius:10px;padding:11px 13px;margin-bottom:8px;border:1.5px solid rgba(255,255,255,.12)">
+      <div style="color:var(--au2);font-size:.76rem;font-weight:700;margin-bottom:7px">📲 اینڈرائیڈ Chrome پر انسٹال:</div>
+      <div style="color:rgba(255,255,255,.7);font-size:.72rem;line-height:2">
+        ① Chrome میں یہ فائل کھولیں<br>
+        ② اوپر دائیں <b style="color:#fff">⋮</b> مینو دبائیں<br>
+        ③ <b style="color:var(--au2)">"Add to Home screen"</b> منتخب کریں<br>
+        ④ <b style="color:var(--au2)">"Install"</b> دبائیں
+      </div>
+      <div style="margin-top:8px;color:rgba(255,255,255,.4);font-size:.66rem">
+        💡 ٹِپ: فائل کو گوگل ڈرائیو یا لوکل اسٹوریج سے Chrome میں کھولیں
+      </div>
+    </div>
+
+    <!-- iOS / iPadOS Safari hint -->
+    <div class="pwa-ios-hint" id="pwa-ios-hint" style="display:none">
+      <b>آئی فون / آئی پیڈ پر انسٹال:</b><br>
+      ① <b>Safari</b> میں کھولیں (Chrome نہیں) ② نیچے <b>شیئر ⬆</b> بٹن دبائیں<br>
+      ③ <b style="color:var(--au2)">"Add to Home Screen"</b> منتخب کریں
+    </div>
+
+    <div style="color:rgba(255,255,255,.32);font-size:.67rem;margin-top:6px;line-height:1.7" id="pwa-status">
+      ⏳ انسٹال آپشن لوڈ ہو رہا ہے...
+    </div>
+  </div>
+
+  <!-- SHARE & EXPORT -->
+  <div class="tpsec">
+    <div class="tpsec-t">📤 شیئر و برآمد</div>
+    <button class="act-btn" onclick="sharePg()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      موجودہ صفحہ شیئر کریں
+    </button>
+    <button class="act-btn wa-btn" onclick="shareWhatsApp()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      واٹس ایپ پر پیشرفت شیئر کریں
+    </button>
+    <button class="act-btn" onclick="exportNotes()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      تمام نوٹس برآمد کریں (TXT)
+    </button>
+    <button class="act-btn" onclick="openStats()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      پڑھنے کی پیشرفت دیکھیں
+    </button>
+  </div>
+
+  <!-- SECURITY -->
+  <div class="tpsec">
+    <div class="tpsec-t">🔐 سیکیورٹی</div>
+    <div class="tprow">
+      <span class="tprow-lbl">🔒 پن لاک</span>
+      <label class="tgl"><input type="checkbox" id="pin-tgl" onchange="togglePinSetup(this.checked)"><span class="tgl-sl"></span></label>
+    </div>
+    <div id="pin-setup-area" style="display:none;margin-top:8px">
+      <div style="color:rgba(255,255,255,.5);font-size:.72rem;margin-bottom:6px">نیا ۴ ہندسہ پن درج کریں:</div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <input type="password" id="new-pin" maxlength="4" placeholder="۰۰۰۰"
+          style="width:80px;padding:8px;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.2);
+          color:#fff;border-radius:8px;font-size:1.1rem;text-align:center;font-family:var(--fur);outline:none">
+        <button class="as-btn" onclick="savePin()">محفوظ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOOKMARK PANEL -->
+<div class="bmpanel" id="bmpanel">
+  <div class="bmhd">
+    <span class="bmhd-t">🔖 میرے بک مارکس</span>
+    <button class="bmhd-x" onclick="closeBM()">✕</button>
+  </div>
+  <div class="bmlist" id="bmlist"></div>
+  <button class="bm-addbtn" onclick="addBM()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+      <line x1="12" y1="8" x2="12" y2="14"/><line x1="9" y1="11" x2="15" y2="11"/>
+    </svg>
+    موجودہ صفحہ بک مارک کریں (ص <span id="bm-cur-pg">—</span>)
+  </button>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bn">
+  <div class="bni">
+    <button class="bb" onclick="openMob('s')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+      </svg>سورتیں
+    </button>
+    <button class="bb" onclick="openMob('p')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+        <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+      </svg>پارے
+    </button>
+    <button class="bb bb-nav" onclick="chPg(-1)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>پچھلا
+    </button>
+    <button class="bb bb-nav" onclick="chPg(1)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>اگلا
+    </button>
+    <button class="bb" id="bmbtn" onclick="toggleBM()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+      </svg>بک مارک
+    </button>
+    <button class="bb" id="toolbtn" onclick="toggleTools()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/>
+      </svg>ابزار
+    </button>
+  </div>
+</div>
+
+<!-- Mobile Drawer -->
+<div class="mov" id="mov" onclick="closeMob()"></div>
+<div class="md" id="mdraw">
+  <div class="sbh">
+    <div class="sbl"><div class="sbi">📖</div>
+      <div><span class="t1">القرآن الکریم</span><span class="t2">۶۰۴ صفحات</span></div>
+    </div>
+    <input type="text" class="sbs" id="mobsr" placeholder="سورۃ تلاش کریں..." oninput="filSM()">
+  </div>
+  <div class="stabs">
+    <div class="stab on" id="mts" onclick="swMT('s',this)">📋 سورتیں</div>
+    <div class="stab" id="mtp" onclick="swMT('p',this)">📚 پارے</div>
+  </div>
+  <div class="sbb"><div class="tp on" id="mtps"></div><div class="tp" id="mtpp"></div></div>
+</div>
+
+<!-- STATS MODAL -->
+<div class="modal" id="stats-modal" onclick="if(event.target===this)closeStats()">
+  <div class="mbox">
+    <div class="mhd">
+      <h2>📊 پڑھنے کی پیشرفت</h2>
+      <button class="mx" onclick="closeStats()">✕</button>
+    </div>
+    <div class="mbd">
+      <!-- Stats Grid -->
+      <div class="stat-grid" id="stat-grid">
+        <div class="stat-card stat-streak">
+          <div class="stat-val" id="stat-streak">0 🔥</div>
+          <div class="stat-lbl">مسلسل دن</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="stat-time">0</div>
+          <div class="stat-lbl">آج کے منٹ</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="stat-pages">0</div>
+          <div class="stat-lbl">آج پڑھے گئے صفحات</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="stat-total">0</div>
+          <div class="stat-lbl">کل صفحات پڑھے</div>
+        </div>
+      </div>
+
+      <!-- Daily Goal -->
+      <div style="background:var(--g4);border-radius:12px;padding:13px;margin-bottom:12px;border:1.5px solid var(--g3)">
+        <div style="font-size:.82rem;font-weight:600;color:var(--g2);margin-bottom:8px">🎯 روزانہ ہدف</div>
+        <div class="goal-row">
+          <span style="font-size:.78rem;color:var(--txt)">روزانہ صفحات:</span>
+          <input type="number" class="goal-inp" id="goal-inp" min="1" max="100" value="10" style="width:70px" onchange="saveGoal()">
+          <span style="font-size:.78rem;color:var(--dim)">صفحات</span>
+        </div>
+        <div class="goal-bar-wrap"><div class="goal-bar" id="goal-bar" style="width:0%"></div></div>
+        <div class="goal-pct" id="goal-pct">0 / 10 صفحات (0%)</div>
+      </div>
+
+      <!-- Reading Log -->
+      <div style="font-size:.82rem;font-weight:600;color:var(--g2);margin-bottom:8px">📅 پچھلے ۷ دن</div>
+      <div id="week-log" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:14px"></div>
+
+      <!-- Reset -->
+      <button class="bdel" style="width:100%;margin-top:4px" onclick="resetStats()">🗑️ تمام اعداد صفر کریں</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal" id="modal" onclick="if(event.target===this)closeMod()">
+  <div class="mbox">
+    <div class="mhd"><h2>⚙️ صفحات کی ترتیب</h2><button class="mx" onclick="closeMod()">✕</button></div>
+    <div class="mbd">
+
+      <!-- Bulk Adjustment Section -->
+      <div class="cal-section">
+        <div class="cal-s-title">📐 تمام صفحات ایک ساتھ ایڈجسٹ کریں</div>
+        <div class="cal-s-desc">
+          اگر تمام سورتوں کے صفحے آگے یا پیچھے ہیں تو نیچے + یا − بٹن سے ٹھیک کریں۔<br>
+          <b>موجودہ آفسیٹ:</b> <span id="cur-off-lbl" style="color:var(--au2);font-weight:700">+0</span>
+          &nbsp;|&nbsp; الفاتحہ اس وقت → ص <span id="cur-fat-pg" style="color:var(--au2);font-weight:700">1</span>
+        </div>
+        <!-- Quick shift buttons -->
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+          <button class="adj-btn" onclick="shiftAll(-10)">−10</button>
+          <button class="adj-btn" onclick="shiftAll(-5)">−5</button>
+          <button class="adj-btn" onclick="shiftAll(-1)">−1</button>
+          <button class="adj-btn pos" onclick="shiftAll(1)">+1</button>
+          <button class="adj-btn pos" onclick="shiftAll(5)">+5</button>
+          <button class="adj-btn pos" onclick="shiftAll(10)">+10</button>
+          <button class="adj-btn rst" onclick="shiftAll(-offset)">صفر</button>
+        </div>
+        <!-- Direct Fatiha input -->
+        <div class="cal-s-row">
+          <span class="cal-s-lbl">یا الفاتحہ کا صفحہ لکھیں:</span>
+          <input type="number" id="moff" min="1" placeholder="مثلاً 5">
+          <button class="cal-s-apply" onclick="applyMOff()">✓ لگائیں</button>
+        </div>
+        <div class="cal-s-res" id="moffres"></div>
+      </div>
+
+      <div class="minfo">
+        نیچے کسی مخصوص سورۃ کا صفحہ نمبر خود بھی درست کر سکتے ہیں۔
+        خالی چھوڑیں تو اوپر والی ترتیب خودبخود لگے گی۔
+      </div>
+      <table class="mtbl">
+        <thead><tr><th>#</th><th>سورۃ</th><th>صفحہ &nbsp;<span style="font-size:.62rem;color:var(--dim);font-weight:400">( − صفحہ + ↺ )</span></th></tr></thead>
+        <tbody id="mtb"></tbody>
+      </table>
+
+      <!-- PARA ADJUSTMENT TABLE -->
+      <div style="margin-top:16px;border-top:2px solid var(--bdr);padding-top:12px">
+        <div style="font-size:.82rem;font-weight:600;color:var(--g2);margin-bottom:6px;display:flex;align-items:center;gap:5px">
+          📚 پاروں کے صفحات ایڈجسٹ کریں
+        </div>
+
+        <!-- Para bulk shift box -->
+        <div class="cal-section" style="margin-bottom:12px">
+          <div class="cal-s-title">📐 تمام پارے ایک ساتھ ایڈجسٹ کریں</div>
+          <div class="cal-s-desc">
+            اگر تمام پاروں کے صفحے آگے یا پیچھے ہیں تو یہاں سے ٹھیک کریں۔<br>
+            <b>پارہ ۱ اس وقت</b> → ص <span id="cur-p1-pg" style="color:var(--au2);font-weight:700">1</span>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+            <button class="adj-btn pos" onclick="shiftAllPara(10)">+10</button>
+            <button class="adj-btn pos" onclick="shiftAllPara(5)">+5</button>
+            <button class="adj-btn pos" onclick="shiftAllPara(1)">+1</button>
+            <button class="adj-btn" onclick="shiftAllPara(-1)">−1</button>
+            <button class="adj-btn" onclick="shiftAllPara(-5)">−5</button>
+            <button class="adj-btn" onclick="shiftAllPara(-10)">−10</button>
+            <button class="adj-btn rst" onclick="resetAllPara()">سب صفر</button>
+          </div>
+          <div class="cal-s-row">
+            <span class="cal-s-lbl">یا پارہ ۱ کا صفحہ لکھیں:</span>
+            <input type="number" id="p1inp" min="1" placeholder="مثلاً 5">
+            <button class="cal-s-apply" onclick="applyPara1()">✓ لگائیں</button>
+          </div>
+          <div class="cal-s-res" id="p1res"></div>
+        </div>
+
+        <div class="minfo" style="margin-bottom:10px">
+          کسی ایک پارہ کا صفحہ الگ سے بھی درست کر سکتے ہیں۔
+        </div>
+        <table class="mtbl">
+          <thead><tr><th>#</th><th>پارہ</th><th>صفحہ &nbsp;<span style="font-size:.62rem;color:var(--dim);font-weight:400">( − صفحہ + ↺ )</span></th></tr></thead>
+          <tbody id="ptb"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="mft">
+      <button class="bs" onclick="saveMod()">💾 محفوظ</button>
+      <button class="br" onclick="resetMod()">🔄 ڈیفالٹ</button>
+      <button class="bdel" onclick="delPDF()">🗑️ PDF ہٹائیں</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+// ── APK DATA: all page numbers are 16-line Quran pages (1–604) ──
+const APK=[{n:1,fp:1,ta:7,tr:1,pr:1,ru:[{r:1,a:1,p:1}]},{n:2,fp:2,ta:286,tr:40,pr:1,ru:[{r:1,a:1,p:2},{r:2,a:8,p:3},{r:3,a:21,p:5},{r:4,a:30,p:6},{r:5,a:40,p:7},{r:6,a:47,p:9},{r:7,a:60,p:9},{r:8,a:62,p:11},{r:9,a:72,p:12},{r:10,a:83,p:13},{r:11,a:87,p:15},{r:12,a:97,p:16},{r:13,a:104,p:17},{r:14,a:113,p:19},{r:15,a:122,p:20},{r:16,a:130,p:22},{r:17,a:142,p:23},{r:18,a:148,p:23},{r:19,a:153,p:25},{r:20,a:164,p:25},{r:21,a:168,p:27},{r:22,a:177,p:28},{r:23,a:183,p:30},{r:24,a:189,p:32},{r:25,a:197,p:34},{r:26,a:211,p:35},{r:27,a:217,p:36},{r:28,a:222,p:38},{r:29,a:229,p:39},{r:30,a:232,p:40},{r:31,a:236,p:41},{r:32,a:243,p:42},{r:33,a:249,p:43},{r:34,a:254,p:44},{r:35,a:258,p:45},{r:36,a:261,p:45},{r:37,a:267,p:46},{r:38,a:274,p:48},{r:39,a:282,p:49},{r:40,a:284,p:49}]},{n:3,fp:50,ta:200,tr:20,pr:3,ru:[{r:1,a:1,p:50},{r:2,a:10,p:51},{r:3,a:21,p:52},{r:4,a:31,p:54},{r:5,a:42,p:55},{r:6,a:55,p:57},{r:7,a:64,p:57},{r:8,a:72,p:58},{r:9,a:81,p:60},{r:10,a:92,p:60},{r:11,a:102,p:61},{r:12,a:110,p:63},{r:13,a:121,p:63},{r:14,a:130,p:64},{r:15,a:144,p:65},{r:16,a:149,p:66},{r:17,a:156,p:68},{r:18,a:172,p:69},{r:19,a:181,p:71},{r:20,a:190,p:75}]},{n:4,fp:77,ta:176,tr:24,pr:4,ru:[{r:1,a:1,p:77},{r:2,a:11,p:78},{r:3,a:15,p:79},{r:4,a:23,p:80},{r:5,a:26,p:81},{r:6,a:34,p:82},{r:7,a:43,p:84},{r:8,a:51,p:85},{r:9,a:60,p:86},{r:10,a:71,p:88},{r:11,a:77,p:89},{r:12,a:88,p:91},{r:13,a:92,p:92},{r:14,a:97,p:92},{r:15,a:101,p:93},{r:16,a:105,p:94},{r:17,a:113,p:95},{r:18,a:116,p:96},{r:19,a:127,p:97},{r:20,a:135,p:99},{r:21,a:142,p:100},{r:22,a:153,p:102},{r:23,a:163,p:103},{r:24,a:172,p:105}]},{n:5,fp:106,ta:120,tr:16,pr:6,ru:[{r:1,a:1,p:106},{r:2,a:6,p:107},{r:3,a:12,p:108},{r:4,a:20,p:109},{r:5,a:27,p:110},{r:6,a:35,p:112},{r:7,a:44,p:114},{r:8,a:51,p:115},{r:9,a:57,p:116},{r:10,a:67,p:118},{r:11,a:78,p:120},{r:12,a:87,p:121},{r:13,a:94,p:123},{r:14,a:101,p:124},{r:15,a:109,p:126},{r:16,a:116,p:127}]},{n:6,fp:128,ta:165,tr:20,pr:7,ru:[{r:1,a:1,p:128},{r:2,a:11,p:129},{r:3,a:21,p:130},{r:4,a:31,p:132},{r:5,a:42,p:133},{r:6,a:51,p:134},{r:7,a:56,p:135},{r:8,a:61,p:136},{r:9,a:71,p:137},{r:10,a:83,p:139},{r:11,a:91,p:139},{r:12,a:95,p:141},{r:13,a:101,p:142},{r:14,a:111,p:143},{r:15,a:122,p:144},{r:16,a:130,p:146},{r:17,a:141,p:147},{r:18,a:145,p:148},{r:19,a:151,p:149},{r:20,a:155,p:149}]},{n:7,fp:151,ta:206,tr:24,pr:8,ru:[{r:1,a:1,p:151},{r:2,a:11,p:152},{r:3,a:26,p:154},{r:4,a:32,p:154},{r:5,a:40,p:156},{r:6,a:48,p:157},{r:7,a:54,p:157},{r:8,a:59,p:158},{r:9,a:65,p:159},{r:10,a:73,p:160},{r:11,a:85,p:161},{r:12,a:94,p:162},{r:13,a:100,p:163},{r:14,a:109,p:164},{r:15,a:127,p:165},{r:16,a:130,p:167},{r:17,a:142,p:168},{r:18,a:148,p:168},{r:19,a:152,p:170},{r:20,a:158,p:170},{r:21,a:163,p:171},{r:22,a:172,p:172},{r:23,a:182,p:174},{r:24,a:189,p:174}]},{n:8,fp:177,ta:75,tr:10,pr:9,ru:[{r:1,a:1,p:177},{r:2,a:11,p:178},{r:3,a:20,p:179},{r:4,a:29,p:180},{r:5,a:38,p:182},{r:6,a:45,p:182},{r:7,a:49,p:183},{r:8,a:59,p:184},{r:9,a:65,p:185},{r:10,a:70,p:186}]},{n:9,fp:187,ta:129,tr:16,pr:10,ru:[{r:1,a:1,p:187},{r:2,a:7,p:188},{r:3,a:17,p:189},{r:4,a:25,p:191},{r:5,a:30,p:191},{r:6,a:38,p:193},{r:7,a:43,p:193},{r:8,a:60,p:196},{r:9,a:67,p:197},{r:10,a:73,p:198},{r:11,a:81,p:200},{r:12,a:90,p:201},{r:13,a:100,p:203},{r:14,a:111,p:205},{r:15,a:119,p:206},{r:16,a:123,p:207}]},{n:10,fp:208,ta:109,tr:11,pr:11,ru:[{r:1,a:1,p:208},{r:2,a:11,p:209},{r:3,a:21,p:210},{r:4,a:31,p:211},{r:5,a:41,p:212},{r:6,a:54,p:214},{r:7,a:61,p:215},{r:8,a:71,p:216},{r:9,a:83,p:217},{r:10,a:93,p:219},{r:11,a:104,p:220}]},{n:11,fp:221,ta:123,tr:10,pr:11,ru:[{r:1,a:1,p:221},{r:2,a:9,p:221},{r:3,a:25,p:223},{r:4,a:36,p:225},{r:5,a:50,p:226},{r:6,a:61,p:227},{r:7,a:69,p:228},{r:8,a:84,p:230},{r:9,a:96,p:231},{r:10,a:110,p:233}]},{n:12,fp:235,ta:111,tr:12,pr:12,ru:[{r:1,a:1,p:235},{r:2,a:7,p:235},{r:3,a:21,p:237},{r:4,a:30,p:238},{r:5,a:36,p:239},{r:6,a:43,p:240},{r:7,a:50,p:241},{r:8,a:58,p:242},{r:9,a:69,p:243},{r:10,a:80,p:245},{r:11,a:94,p:246},{r:12,a:105,p:248}]},{n:13,fp:249,ta:43,tr:6,pr:13,ru:[{r:1,a:1,p:249},{r:2,a:8,p:250},{r:3,a:19,p:251},{r:4,a:27,p:252},{r:5,a:32,p:253},{r:6,a:38,p:254}]},{n:14,fp:255,ta:52,tr:7,pr:13,ru:[{r:1,a:1,p:255},{r:2,a:7,p:255},{r:3,a:13,p:256},{r:4,a:22,p:257},{r:5,a:28,p:258},{r:6,a:35,p:259},{r:7,a:42,p:260}]},{n:15,fp:262,ta:99,tr:6,pr:13,ru:[{r:1,a:1,p:262},{r:2,a:16,p:262},{r:3,a:26,p:263},{r:4,a:45,p:264},{r:5,a:61,p:265},{r:6,a:80,p:266}]},{n:16,fp:267,ta:128,tr:16,pr:14,ru:[{r:1,a:1,p:267},{r:2,a:10,p:268},{r:3,a:22,p:268},{r:4,a:26,p:269},{r:5,a:35,p:271},{r:6,a:41,p:271},{r:7,a:51,p:272},{r:8,a:61,p:273},{r:9,a:66,p:274},{r:10,a:71,p:274},{r:11,a:77,p:276},{r:12,a:84,p:276},{r:13,a:90,p:277},{r:14,a:101,p:278},{r:15,a:111,p:280},{r:16,a:120,p:281}]},{n:17,fp:282,ta:111,tr:12,pr:14,ru:[{r:1,a:1,p:282},{r:2,a:11,p:283},{r:3,a:23,p:284},{r:4,a:31,p:285},{r:5,a:41,p:286},{r:6,a:53,p:287},{r:7,a:61,p:288},{r:8,a:71,p:289},{r:9,a:78,p:289},{r:10,a:85,p:290},{r:11,a:94,p:291},{r:12,a:101,p:292}]},{n:18,fp:293,ta:110,tr:12,pr:15,ru:[{r:1,a:1,p:293},{r:2,a:13,p:293},{r:3,a:18,p:294},{r:4,a:23,p:295},{r:5,a:32,p:296},{r:6,a:45,p:297},{r:7,a:50,p:298},{r:8,a:54,p:298},{r:9,a:60,p:299},{r:10,a:71,p:300},{r:11,a:83,p:302},{r:12,a:102,p:304}]},{n:19,fp:305,ta:98,tr:6,pr:16,ru:[{r:1,a:1,p:305},{r:2,a:16,p:306},{r:3,a:41,p:307},{r:4,a:51,p:308},{r:5,a:66,p:309},{r:6,a:83,p:310}]},{n:20,fp:312,ta:135,tr:8,pr:16,ru:[{r:1,a:1,p:312},{r:2,a:25,p:313},{r:3,a:55,p:316},{r:4,a:77,p:317},{r:5,a:90,p:318},{r:6,a:105,p:319},{r:7,a:116,p:320},{r:8,a:129,p:321}]},{n:21,fp:322,ta:112,tr:7,pr:16,ru:[{r:1,a:1,p:322},{r:2,a:11,p:322},{r:3,a:30,p:324},{r:4,a:42,p:325},{r:5,a:51,p:326},{r:6,a:76,p:328},{r:7,a:94,p:330}]},{n:22,fp:332,ta:78,tr:10,pr:17,ru:[{r:1,a:1,p:332},{r:2,a:11,p:333},{r:3,a:23,p:334},{r:4,a:26,p:335},{r:5,a:34,p:336},{r:6,a:39,p:336},{r:7,a:49,p:338},{r:8,a:58,p:339},{r:9,a:65,p:340},{r:10,a:73,p:341}]},{n:23,fp:342,ta:118,tr:6,pr:17,ru:[{r:1,a:1,p:342},{r:2,a:23,p:343},{r:3,a:33,p:344},{r:4,a:51,p:345},{r:5,a:78,p:347},{r:6,a:93,p:348}]},{n:24,fp:350,ta:64,tr:9,pr:18,ru:[{r:1,a:1,p:350},{r:2,a:11,p:351},{r:3,a:21,p:352},{r:4,a:27,p:353},{r:5,a:35,p:354},{r:6,a:41,p:355},{r:7,a:51,p:357},{r:8,a:58,p:358},{r:9,a:62,p:358}]},{n:25,fp:359,ta:77,tr:6,pr:18,ru:[{r:1,a:1,p:359},{r:2,a:10,p:360},{r:3,a:21,p:361},{r:4,a:35,p:362},{r:5,a:45,p:363},{r:6,a:61,p:365}]},{n:26,fp:367,ta:227,tr:11,pr:19,ru:[{r:1,a:1,p:367},{r:2,a:10,p:367},{r:3,a:34,p:368},{r:4,a:53,p:369},{r:5,a:70,p:370},{r:6,a:105,p:371},{r:7,a:123,p:372},{r:8,a:141,p:373},{r:9,a:160,p:374},{r:10,a:176,p:374},{r:11,a:192,p:375}]},{n:27,fp:377,ta:93,tr:7,pr:19,ru:[{r:1,a:1,p:377},{r:2,a:15,p:378},{r:3,a:32,p:379},{r:4,a:45,p:380},{r:5,a:59,p:382},{r:6,a:67,p:382},{r:7,a:83,p:384}]},{n:28,fp:385,ta:88,tr:8,pr:20,ru:[{r:1,a:1,p:385},{r:2,a:14,p:386},{r:3,a:22,p:387},{r:4,a:29,p:388},{r:5,a:43,p:390},{r:6,a:51,p:391},{r:7,a:61,p:392},{r:8,a:76,p:394}]},{n:29,fp:396,ta:69,tr:7,pr:20,ru:[{r:1,a:1,p:396},{r:2,a:14,p:397},{r:3,a:23,p:398},{r:4,a:31,p:399},{r:5,a:45,p:401},{r:6,a:52,p:402},{r:7,a:64,p:403}]},{n:30,fp:404,ta:60,tr:6,pr:21,ru:[{r:1,a:1,p:404},{r:2,a:11,p:405},{r:3,a:20,p:406},{r:4,a:28,p:407},{r:5,a:41,p:408},{r:6,a:54,p:410}]},{n:31,fp:411,ta:34,tr:3,pr:21,ru:[{r:1,a:1,p:411},{r:2,a:12,p:412},{r:3,a:20,p:413}]},{n:32,fp:415,ta:30,tr:3,pr:21,ru:[{r:1,a:1,p:415},{r:2,a:12,p:416},{r:3,a:23,p:417}]},{n:33,fp:418,ta:73,tr:9,pr:21,ru:[{r:1,a:1,p:418},{r:2,a:9,p:419},{r:3,a:21,p:420},{r:4,a:28,p:421},{r:5,a:35,p:422},{r:6,a:41,p:423},{r:7,a:53,p:425},{r:8,a:59,p:426},{r:9,a:69,p:427}]},{n:34,fp:428,ta:54,tr:6,pr:22,ru:[{r:1,a:1,p:428},{r:2,a:10,p:429},{r:3,a:22,p:430},{r:4,a:31,p:431},{r:5,a:37,p:432},{r:6,a:46,p:433}]},{n:35,fp:434,ta:45,tr:5,pr:22,ru:[{r:1,a:1,p:434},{r:2,a:8,p:435},{r:3,a:15,p:435},{r:4,a:27,p:437},{r:5,a:38,p:439}]},{n:36,fp:440,ta:83,tr:5,pr:22,ru:[{r:1,a:1,p:440},{r:2,a:13,p:441},{r:3,a:33,p:442},{r:4,a:51,p:444},{r:5,a:68,p:445}]},{n:37,fp:447,ta:182,tr:5,pr:23,ru:[{r:1,a:1,p:447},{r:2,a:22,p:447},{r:3,a:75,p:449},{r:4,a:114,p:450},{r:5,a:139,p:451}]},{n:38,fp:453,ta:88,tr:5,pr:23,ru:[{r:1,a:1,p:453},{r:2,a:15,p:453},{r:3,a:27,p:454},{r:4,a:41,p:455},{r:5,a:65,p:457}]},{n:39,fp:459,ta:75,tr:8,pr:23,ru:[{r:1,a:1,p:459},{r:2,a:10,p:460},{r:3,a:22,p:461},{r:4,a:32,p:462},{r:5,a:42,p:463},{r:6,a:53,p:464},{r:7,a:64,p:465},{r:8,a:71,p:466}]},{n:40,fp:467,ta:85,tr:9,pr:24,ru:[{r:1,a:1,p:467},{r:2,a:10,p:468},{r:3,a:21,p:469},{r:4,a:28,p:470},{r:5,a:38,p:471},{r:6,a:51,p:473},{r:7,a:61,p:474},{r:8,a:69,p:475},{r:9,a:79,p:476}]},{n:41,fp:477,ta:54,tr:6,pr:24,ru:[{r:1,a:1,p:477},{r:2,a:9,p:477},{r:3,a:19,p:479},{r:4,a:26,p:479},{r:5,a:33,p:480},{r:6,a:45,p:482}]},{n:42,fp:483,ta:53,tr:5,pr:25,ru:[{r:1,a:1,p:483},{r:2,a:10,p:484},{r:3,a:20,p:485},{r:4,a:30,p:486},{r:5,a:44,p:488}]},{n:43,fp:489,ta:89,tr:7,pr:25,ru:[{r:1,a:1,p:489},{r:2,a:16,p:490},{r:3,a:26,p:491},{r:4,a:36,p:491},{r:5,a:46,p:492},{r:6,a:57,p:493},{r:7,a:68,p:494}]},{n:44,fp:496,ta:59,tr:3,pr:25,ru:[{r:1,a:1,p:496},{r:2,a:30,p:497},{r:3,a:43,p:498}]},{n:45,fp:499,ta:37,tr:4,pr:25,ru:[{r:1,a:1,p:499},{r:2,a:12,p:499},{r:3,a:22,p:500},{r:4,a:27,p:501}]},{n:46,fp:502,ta:35,tr:4,pr:25,ru:[{r:1,a:1,p:502},{r:2,a:11,p:503},{r:3,a:21,p:505},{r:4,a:27,p:505}]},{n:47,fp:507,ta:38,tr:4,pr:26,ru:[{r:1,a:1,p:507},{r:2,a:12,p:508},{r:3,a:20,p:509},{r:4,a:29,p:510}]},{n:48,fp:511,ta:29,tr:4,pr:26,ru:[{r:1,a:1,p:511},{r:2,a:11,p:512},{r:3,a:18,p:513},{r:4,a:27,p:514}]},{n:49,fp:515,ta:18,tr:2,pr:26,ru:[{r:1,a:1,p:515},{r:2,a:11,p:516}]},{n:50,fp:518,ta:45,tr:3,pr:26,ru:[{r:1,a:1,p:518},{r:2,a:16,p:518},{r:3,a:30,p:519}]},{n:51,fp:520,ta:60,tr:3,pr:26,ru:[{r:1,a:1,p:520},{r:2,a:24,p:521},{r:3,a:47,p:522}]},{n:52,fp:523,ta:49,tr:2,pr:27,ru:[{r:1,a:1,p:523},{r:2,a:29,p:524}]},{n:53,fp:526,ta:62,tr:3,pr:27,ru:[{r:1,a:1,p:526},{r:2,a:26,p:526},{r:3,a:33,p:527}]},{n:54,fp:528,ta:55,tr:3,pr:27,ru:[{r:1,a:1,p:528},{r:2,a:23,p:529},{r:3,a:41,p:530}]},{n:55,fp:531,ta:78,tr:3,pr:27,ru:[{r:1,a:1,p:531},{r:2,a:26,p:531},{r:3,a:46,p:532}]},{n:56,fp:534,ta:96,tr:3,pr:27,ru:[{r:1,a:1,p:534},{r:2,a:39,p:535},{r:3,a:75,p:536}]},{n:57,fp:537,ta:29,tr:4,pr:27,ru:[{r:1,a:1,p:537},{r:2,a:11,p:538},{r:3,a:20,p:540},{r:4,a:26,p:541}]},{n:58,fp:542,ta:22,tr:3,pr:27,ru:[{r:1,a:1,p:542},{r:2,a:7,p:542},{r:3,a:14,p:543}]},{n:59,fp:545,ta:24,tr:3,pr:28,ru:[{r:1,a:1,p:545},{r:2,a:11,p:546},{r:3,a:18,p:548}]},{n:60,fp:549,ta:13,tr:2,pr:28,ru:[{r:1,a:1,p:549},{r:2,a:7,p:550}]},{n:61,fp:551,ta:14,tr:2,pr:28,ru:[{r:1,a:1,p:551},{r:2,a:10,p:552}]},{n:62,fp:553,ta:11,tr:2,pr:28,ru:[{r:1,a:1,p:553},{r:2,a:9,p:553}]},{n:63,fp:554,ta:11,tr:2,pr:28,ru:[{r:1,a:1,p:554},{r:2,a:9,p:555}]},{n:64,fp:556,ta:18,tr:2,pr:28,ru:[{r:1,a:1,p:556},{r:2,a:11,p:557}]},{n:65,fp:558,ta:12,tr:2,pr:28,ru:[{r:1,a:1,p:558},{r:2,a:8,p:559}]},{n:66,fp:560,ta:12,tr:2,pr:28,ru:[{r:1,a:1,p:560},{r:2,a:8,p:561}]},{n:67,fp:562,ta:30,tr:2,pr:29,ru:[{r:1,a:1,p:562},{r:2,a:15,p:562}]},{n:68,fp:564,ta:52,tr:2,pr:29,ru:[{r:1,a:1,p:564},{r:2,a:34,p:565}]},{n:69,fp:566,ta:52,tr:2,pr:29,ru:[{r:1,a:1,p:566},{r:2,a:38,p:567}]},{n:70,fp:568,ta:44,tr:2,pr:29,ru:[{r:1,a:1,p:568},{r:2,a:36,p:569}]},{n:71,fp:570,ta:28,tr:2,pr:29,ru:[{r:1,a:1,p:570},{r:2,a:21,p:571}]},{n:72,fp:572,ta:28,tr:2,pr:29,ru:[{r:1,a:1,p:572},{r:2,a:20,p:573}]},{n:73,fp:574,ta:20,tr:2,pr:29,ru:[{r:1,a:1,p:574},{r:2,a:20,p:574}]},{n:74,fp:575,ta:56,tr:2,pr:29,ru:[{r:1,a:1,p:575},{r:2,a:32,p:576}]},{n:75,fp:577,ta:40,tr:2,pr:29,ru:[{r:1,a:1,p:577},{r:2,a:31,p:578}]},{n:76,fp:579,ta:31,tr:2,pr:29,ru:[{r:1,a:1,p:579},{r:2,a:23,p:580}]},{n:77,fp:581,ta:50,tr:2,pr:29,ru:[{r:1,a:1,p:581},{r:2,a:41,p:581}]},{n:78,fp:582,ta:40,tr:2,pr:29,ru:[{r:1,a:1,p:582},{r:2,a:31,p:582}]},{n:79,fp:583,ta:46,tr:2,pr:30,ru:[{r:1,a:1,p:583},{r:2,a:27,p:584}]},{n:80,fp:585,ta:42,tr:1,pr:30,ru:[{r:1,a:1,p:585}]},{n:81,fp:586,ta:29,tr:1,pr:30,ru:[{r:1,a:1,p:586}]},{n:82,fp:587,ta:19,tr:1,pr:30,ru:[{r:1,a:1,p:587}]},{n:83,fp:587,ta:36,tr:1,pr:30,ru:[{r:1,a:1,p:587}]},{n:84,fp:589,ta:25,tr:1,pr:30,ru:[{r:1,a:1,p:589}]},{n:85,fp:590,ta:22,tr:1,pr:30,ru:[{r:1,a:1,p:590}]},{n:86,fp:591,ta:17,tr:1,pr:30,ru:[{r:1,a:1,p:591}]},{n:87,fp:591,ta:19,tr:1,pr:30,ru:[{r:1,a:1,p:591}]},{n:88,fp:592,ta:26,tr:1,pr:30,ru:[{r:1,a:1,p:592}]},{n:89,fp:593,ta:30,tr:1,pr:30,ru:[{r:1,a:1,p:593}]},{n:90,fp:594,ta:20,tr:1,pr:30,ru:[{r:1,a:1,p:594}]},{n:91,fp:595,ta:15,tr:1,pr:30,ru:[{r:1,a:1,p:595}]},{n:92,fp:595,ta:21,tr:1,pr:30,ru:[{r:1,a:1,p:595}]},{n:93,fp:596,ta:11,tr:1,pr:30,ru:[{r:1,a:1,p:596}]},{n:94,fp:596,ta:8,tr:1,pr:30,ru:[{r:1,a:1,p:596}]},{n:95,fp:597,ta:8,tr:1,pr:30,ru:[{r:1,a:1,p:597}]},{n:96,fp:597,ta:19,tr:1,pr:30,ru:[{r:1,a:1,p:597}]},{n:97,fp:598,ta:5,tr:1,pr:30,ru:[{r:1,a:1,p:598}]},{n:98,fp:598,ta:8,tr:1,pr:30,ru:[{r:1,a:1,p:598}]},{n:99,fp:599,ta:8,tr:1,pr:30,ru:[{r:1,a:1,p:599}]},{n:100,fp:599,ta:11,tr:1,pr:30,ru:[{r:1,a:1,p:599}]},{n:101,fp:600,ta:11,tr:1,pr:30,ru:[{r:1,a:1,p:600}]},{n:102,fp:600,ta:8,tr:1,pr:30,ru:[{r:1,a:1,p:600}]},{n:103,fp:601,ta:3,tr:1,pr:30,ru:[{r:1,a:1,p:601}]},{n:104,fp:601,ta:9,tr:1,pr:30,ru:[{r:1,a:1,p:601}]},{n:105,fp:601,ta:5,tr:1,pr:30,ru:[{r:1,a:1,p:601}]},{n:106,fp:602,ta:4,tr:1,pr:30,ru:[{r:1,a:1,p:602}]},{n:107,fp:602,ta:7,tr:1,pr:30,ru:[{r:1,a:1,p:602}]},{n:108,fp:602,ta:3,tr:1,pr:30,ru:[{r:1,a:1,p:602}]},{n:109,fp:603,ta:6,tr:1,pr:30,ru:[{r:1,a:1,p:603}]},{n:110,fp:603,ta:3,tr:1,pr:30,ru:[{r:1,a:1,p:603}]},{n:111,fp:603,ta:5,tr:1,pr:30,ru:[{r:1,a:1,p:603}]},{n:112,fp:604,ta:4,tr:1,pr:30,ru:[{r:1,a:1,p:604}]},{n:113,fp:604,ta:5,tr:1,pr:30,ru:[{r:1,a:1,p:604}]},{n:114,fp:604,ta:7,tr:1,pr:30,ru:[{r:1,a:1,p:604}]}];
+
+const SN=['الفاتحة','البقرة','آل عمران','النساء','المائدة','الأنعام','الأعراف','الأنفال','التوبة','يونس','هود','يوسف','الرعد','إبراهيم','الحجر','النحل','الإسراء','الكهف','مريم','طه','الأنبياء','الحج','المؤمنون','النور','الفرقان','الشعراء','النمل','القصص','العنكبوت','الروم','لقمان','السجدة','الأحزاب','سبأ','فاطر','يس','الصافات','ص','الزمر','غافر','فصلت','الشورى','الزخرف','الدخان','الجاثية','الأحقاف','محمد','الفتح','الحجرات','ق','الذاريات','الطور','النجم','القمر','الرحمن','الواقعة','الحديد','المجادلة','الحشر','الممتحنة','الصف','الجمعة','المنافقون','التغابن','الطلاق','التحريم','الملك','القلم','الحاقة','المعارج','نوح','الجن','المزمل','المدثر','القيامة','الإنسان','المرسلات','النبأ','النازعات','عبس','التكوير','الإنفطار','المطففين','الانشقاق','البروج','الطارق','الأعلى','الغاشية','الفجر','البلد','الشمس','الليل','الضحى','الشرح','التين','العلق','القدر','البينة','الزلزلة','العاديات','القارعة','التكاثر','العصر','الهمزة','الفيل','قريش','الماعون','الكوثر','الكافرون','النصر','المسد','الإخلاص','الفلق','الناس'];
+const SU=['سورۃ الفاتحہ','سورۃ البقرۃ','سورۃ آل عمران','سورۃ النساء','سورۃ المائدہ','سورۃ الانعام','سورۃ الاعراف','سورۃ الانفال','سورۃ التوبہ','سورۃ یونس','سورۃ ہود','سورۃ یوسف','سورۃ الرعد','سورۃ ابراہیم','سورۃ الحجر','سورۃ النحل','سورۃ بنی اسرائیل','سورۃ الکہف','سورۃ مریم','سورۃ طٰہٰ','سورۃ الانبیاء','سورۃ الحج','سورۃ المؤمنون','سورۃ النور','سورۃ الفرقان','سورۃ الشعراء','سورۃ النمل','سورۃ القصص','سورۃ العنکبوت','سورۃ الروم','سورۃ لقمان','سورۃ السجدۃ','سورۃ الاحزاب','سورۃ سبا','سورۃ فاطر','سورۃ یٰس','سورۃ الصافات','سورۃ صٓ','سورۃ الزمر','سورۃ مومن','سورۃ حٰمٓ السجدۃ','سورۃ الشوریٰ','سورۃ الزخرف','سورۃ الدخان','سورۃ الجاثیہ','سورۃ الاحقاف','سورۃ محمد','سورۃ الفتح','سورۃ الحجرات','سورۃ قٓ','سورۃ الذاریات','سورۃ الطور','سورۃ النجم','سورۃ القمر','سورۃ الرحمن','سورۃ الواقعہ','سورۃ الحدید','سورۃ المجادلہ','سورۃ الحشر','سورۃ الممتحنہ','سورۃ الصف','سورۃ الجمعہ','سورۃ المنافقون','سورۃ التغابن','سورۃ الطلاق','سورۃ التحریم','سورۃ الملک','سورۃ القلم','سورۃ الحاقہ','سورۃ المعارج','سورۃ نوح','سورۃ الجن','سورۃ المزمل','سورۃ المدثر','سورۃ القیامہ','سورۃ الانسان','سورۃ المرسلات','سورۃ النبا','سورۃ النازعات','سورۃ عبس','سورۃ التکویر','سورۃ الانفطار','سورۃ المطففین','سورۃ الانشقاق','سورۃ البروج','سورۃ الطارق','سورۃ الاعلیٰ','سورۃ الغاشیہ','سورۃ الفجر','سورۃ البلد','سورۃ الشمس','سورۃ اللیل','سورۃ الضحیٰ','سورۃ الشرح','سورۃ التین','سورۃ العلق','سورۃ القدر','سورۃ البینہ','سورۃ الزلزلہ','سورۃ العادیات','سورۃ القارعہ','سورۃ التکاثر','سورۃ العصر','سورۃ الہمزہ','سورۃ الفیل','سورۃ قریش','سورۃ الماعون','سورۃ الکوثر','سورۃ الکافرون','سورۃ النصر','سورۃ المسد','سورۃ الاخلاص','سورۃ الفلق','سورۃ الناس'];
+const PR=[{n:1,nm:'الٓمٓ',p:1},{n:2,nm:'سَيَقُولُ',p:33},{n:3,nm:'تِلْكَ الرُّسُلُ',p:65},{n:4,nm:'لَنْ تَنَالُوا',p:97},{n:5,nm:'وَالْمُحْصَنَاتُ',p:129},{n:6,nm:'لَا يُحِبُّ اللَّهُ',p:161},{n:7,nm:'وَإِذَا سَمِعُوا',p:193},{n:8,nm:'وَلَوْ أَنَّنَا',p:225},{n:9,nm:'قَالَ الْمَلَأُ',p:257},{n:10,nm:'وَاعْلَمُوا',p:289},{n:11,nm:'يَعْتَذِرُونَ',p:321},{n:12,nm:'وَمَا مِنْ دَابَّةٍ',p:353},{n:13,nm:'وَمَا أُبَرِّئُ',p:385},{n:14,nm:'رُبَمَا',p:417},{n:15,nm:'سُبْحَانَ الَّذِي',p:449},{n:16,nm:'قَالَ أَلَمْ',p:481},{n:17,nm:'اقْتَرَبَ لِلنَّاسِ',p:513},{n:18,nm:'قَدْ أَفْلَحَ',p:545},{n:19,nm:'وَقَالَ الَّذِينَ',p:577},{n:20,nm:'أَمَّنْ خَلَقَ',p:608},{n:21,nm:'اتْلُ مَا أُوحِيَ',p:641},{n:22,nm:'وَمَنْ يَقْنُتْ',p:673},{n:23,nm:'وَمَا لِيَ',p:705},{n:24,nm:'فَمَنْ أَظْلَمُ',p:737},{n:25,nm:'إِلَيْهِ يُرَدُّ',p:769},{n:26,nm:'حٰمٓ',p:801},{n:27,nm:'قَالَ فَمَا خَطْبُكُمْ',p:833},{n:28,nm:'قَدْ سَمِعَ اللَّهُ',p:865},{n:29,nm:'تَبَارَكَ الَّذِي',p:897},{n:30,nm:'عَمَّ يَتَسَاءَلُونَ',p:929}];
+
+// ═══════════════════════════════════════
+// STATE
+// offset = PDF_page - APK_page
+// Example: if Fatiha is on PDF page 13, APK says page 1 → offset = 13-1 = 12
+let PDF=null, curPg=1, totPg=0, zoom=1.3, rtask=null;
+let actS=-1, dark=false;
+let offset=0;      // THE KEY: PDF_page = APK_page + offset
+let custom={};     // surah_idx → manual PDF page override
+let customPara={};  // para_idx (0-29) → manual PDF page override
+
+// ── Convert APK Quran page → actual PDF page ─────────────────────
+// This is the ONLY place we do the conversion
+function q2pdf(qPage){ return Math.max(1, qPage + offset); }
+
+// Get PDF page for surah i
+function sPg(i){ return custom[i]!=null ? custom[i] : q2pdf(APK[i].fp); }
+
+// Get PDF page for para i (0-indexed)
+function paraPg(i){ return customPara[i]!=null ? customPara[i] : q2pdf(PR[i].p); }
+
+// ── Persist settings ──────────────────────────────────────────────
+function ldSt(){
+  try{const d=JSON.parse(localStorage.getItem('tqst_urdu')||'{}');
+    // For 16-line Quran (604 pages): offset = 0 always
+    // PAGE16L maps PDF pages directly, so offset stays 0
+    offset=0;
+    custom=d.custom||{};
+    customPara=d.customPara||{};}catch(e){offset=0;}
+}
+function svSt(){
+  localStorage.setItem('tqst_urdu',JSON.stringify({offset,custom,customPara}));
+}
+ldSt();
+
+// ═══════════════════════════════════════
+// IndexedDB
+const DB='tq_pdf_urdu',ST='pdf';
+let idb=null;
+function openIDB(){
+  return new Promise((ok,err)=>{
+    const r=indexedDB.open(DB,1);
+    r.onupgradeneeded=e=>e.target.result.createObjectStore(ST);
+    r.onsuccess=e=>{idb=e.target.result;ok()};
+    r.onerror=()=>err();
+  });
+}
+async function idbPut(buf,name){
+  if(!idb)await openIDB();
+  return new Promise((ok,er)=>{
+    const tx=idb.transaction(ST,'readwrite');
+    tx.objectStore(ST).put({buf,name},'main');
+    tx.oncomplete=ok; tx.onerror=er;
+  });
+}
+async function idbGet(){
+  if(!idb)await openIDB();
+  return new Promise((ok,er)=>{
+    const r=idb.transaction(ST,'readonly').objectStore(ST).get('main');
+    r.onsuccess=e=>ok(e.target.result||null);
+    r.onerror=er;
+  });
+}
+async function idbDel(){
+  if(!idb)await openIDB();
+  return new Promise((ok,er)=>{
+    const tx=idb.transaction(ST,'readwrite');
+    tx.objectStore(ST).delete('main');
+    tx.oncomplete=ok; tx.onerror=er;
+  });
+}
+
+// ═══════════════════════════════════════
+// SYNC AUDIO PLAYER with sidebar selection
+function syncAudio(surahNum, ayah){
+  if(!PDF) return;
+  audioSurah = surahNum;
+  audioAyah  = ayah;
+  audioManualSet = true; // prevent renderPg from overwriting
+  updAudioLabels();
+  // highlight play button so user knows audio is ready
+  const btn = document.getElementById('mini-play-btn');
+  if(btn && !audioPlaying){
+    btn.classList.add('glow');
+    setTimeout(()=>btn.classList.remove('glow'), 800);
+  }
+}
+
+// ═══════════════════════════════════════
+// BUILD LISTS
+function buildS(fl=''){
+  fl=fl.trim().toLowerCase();
+  let h='';
+  APK.forEach((s,i)=>{
+    if(fl&&!SN[i].includes(fl)&&!SU[i].includes(fl)&&!String(s.n).includes(fl))return;
+    const isA=actS===i;
+    const sp=sPg(i);
+    // ── RUKUS ──
+    let sub=`<div class="ssec">🔷 رکوعات (${s.tr})</div>`;
+    s.ru.forEach(rk=>{
+      const rp=custom[i]!=null?Math.max(1,custom[i]+(rk.p-s.fp)):q2pdf(rk.p);
+      sub+=`<div class="srow" onclick="goP(${rp});syncAudio(${s.n},${rk.a})">
+        <span class="srl"><span class="snum">${rk.r}</span>رکوع ${rk.r} — آیت ${rk.a}</span>
+        <span class="spg">ص ${rp}</span></div>`;
+    });
+    // ── AYAHS ──
+    sub+=`<div class="ssec">📖 آیات (${s.ta})</div>`;
+    const st=s.ta<=10?1:s.ta<=40?5:s.ta<=100?10:20;
+    for(let a=1;a<=s.ta;a+=st){
+      const to=Math.min(a+st-1,s.ta);
+      const lbl=st===1?`آیت ${a}`:`آیت ${a}–${to}`;
+      const nfp=i<113?APK[i+1].fp:APK[i].fp+10;
+      const frac=(a-1)/Math.max(1,s.ta-1);
+      const ap=Math.round(s.fp+frac*(nfp-s.fp));
+      const apdf=custom[i]!=null?Math.max(1,custom[i]+(ap-s.fp)):q2pdf(ap);
+      sub+=`<div class="srow" onclick="goP(${apdf});syncAudio(${s.n},${a})">
+        <span class="srl"><span class="snum">${a}</span>${lbl}</span>
+        <span class="spg">ص ${apdf}</span></div>`;
+    }
+    h+=`
+    <div class="sr${isA?' act':''}" id="sr-${i}" onclick="togSR(${i})">
+      <div class="srn">${s.n}</div>
+      <div class="srb">
+        <span class="sra">${SN[i]}</span>
+        <span class="sru">${SU[i]}</span>
+        <span class="srm">${s.tr} رکوع • ${s.ta} آیات • پارہ ${s.pr}</span>
+      </div>
+      <span class="srp">ص ${sp}</span>
+      <span class="srarr">›</span>
+    </div>
+    <div class="sub${isA?' on':''}" id="sub-${i}">${sub}</div>`;
+  });
+  return h;
+}
+function buildP(){
+  return PR.map((p,i)=>`
+    <div class="pr" onclick="goPara(${i})">
+      <div class="prn">${p.n}</div>
+      <div><div class="prna" style="font-family:var(--far)">${p.nm}</div>
+      <div class="prs">پارہ ${p.n} • ص ${paraPg(i)}</div></div>
+    </div>`).join('');
+}
+function rlists(fl=''){
+  const sh=buildS(fl),ph=buildP();
+  ['tps','tpp','mtps','mtpp'].forEach(id=>{
+    if(id.includes('s'))document.getElementById(id).innerHTML=sh;
+    else document.getElementById(id).innerHTML=ph;
+  });
+}
+
+// ═══════════════════════════════════════
+// CALIBRATION — simple: user tells us Fatiha's PDF page
+// offset = fatiha_pdf_page - 1  (since APK page for Fatiha is 1)
+function applyCalib(){
+  const v=parseInt(document.getElementById('cal-inp').value);
+  if(isNaN(v)||v<1){document.getElementById('cal-res').textContent='براہ کرم صحیح نمبر لکھیں';return;}
+  offset=v-1; // APK[0].fp = 1, so offset = userPage - 1
+  svSt(); rlists(); updPill();
+  const bq=q2pdf(APK[1].fp); // البقرۃ should now be on page v+2
+  document.getElementById('cal-res').textContent=
+    `✓ ترتیب ٹھیک ہوگئی! اب الفاتحہ → ص ${v} | البقرۃ → ص ${bq}`;
+  // hide calbox, show canvas
+  document.getElementById('calbox').classList.remove('on');
+  document.getElementById('cw').style.display='flex';
+  toast(`✓ آفسیٹ ${offset} — تمام صفحے ٹھیک ہوگئے`);
+}
+function applyMOff(){
+  const v=parseInt(document.getElementById('moff').value);
+  if(isNaN(v)||v<1){document.getElementById('moffres').textContent='درست نمبر لکھیں';return;}
+  offset=v-1; svSt(); rlists(); updPill();
+  document.getElementById('moffres').textContent=
+    `✓ الفاتحہ → ص ${v} | البقرۃ → ص ${q2pdf(APK[1].fp)}`;
+  // rebuild modal table
+  buildMTbl();
+  toast(`✓ آفسیٹ ${offset>=0?'+':''}${offset} لگایا گیا`);
+}
+function updPill(){
+  updModLbls();
+}
+
+// ═══════════════════════════════════════
+// SURAH NAVIGATION
+function togSR(i){
+  if(!PDF){toast('پہلے PDF لوڈ کریں');return;}
+  actS=i;
+  rlists(document.getElementById('sbsr')?.value||'');
+  const pg=sPg(i);
+  if(pg>=1&&pg<=totPg){goP(pg);setBc(i);}
+  // sync audio to first ayah of this surah
+  syncAudio(APK[i].n, 1);
+  setTimeout(()=>{
+    document.querySelectorAll(`#sr-${i}`).forEach(el=>
+      el.scrollIntoView({behavior:'smooth',block:'nearest'}));
+  },50);
+  closeMob();
+}
+function goP(pg){
+  pg=Math.max(1,Math.min(totPg||9999,pg));
+  renderPg(pg); closeMob();
+  // track stats
+  if(PDF&&pg>=1){
+    readPages.add(pg);
+    const today=todayStr();
+    const log=JSON.parse(localStorage.getItem('tqlog')||'{}');
+    if(!log[today])log[today]={p:[],m:0};
+    const pSet=new Set(log[today].p||[]);pSet.add(pg);
+    log[today].p=Array.from(pSet);log[today].m=log[today].m||0;
+    localStorage.setItem('tqlog',JSON.stringify(log));
+    const goal=parseInt(localStorage.getItem('tqgoal')||10);
+    if(readPages.size===goal)setTimeout(()=>toast('🎯 آج کا ہدف مکمل! مبارک ہو'),500);
+    if(readPages.size===1&&calcStreak()>1)setTimeout(()=>toast(`🔥 ${calcStreak()} دن کا سلسلہ!`),800);
+  }
+}
+function goPara(i){
+  if(!PDF){toast('پہلے PDF لوڈ کریں');return;}
+  const pg=paraPg(i);
+  goP(pg);
+  toast(`پارہ ${i+1}: ${PR[i].nm} — ص ${pg}`);
+  // sync audio to first surah/ayah of this para
+  const info=getPageSurahAyah(pg);
+  syncAudio(info.surahNum, info.ayah);
+}
+function setBc(i,sub=null){
+  let h=`<span class="bci" onclick="goP(1)">📖 قرآن</span>
+    <span class="bcs">›</span>
+    <span class="bci" onclick="togSR(${i})">${SN[i]} (${APK[i].n})</span>`;
+  if(sub)h+=`<span class="bcs">›</span><span class="bcc">${sub}</span>`;
+  document.getElementById('bcrumb').innerHTML=h;
+}
+
+// ═══════════════════════════════════════
+// PDF LOAD
+function readPDF(inp){if(inp.files[0])doRead(inp.files[0]);}
+function dov(e){e.preventDefault();document.getElementById('dbox').classList.add('dov');}
+function dol(){document.getElementById('dbox').classList.remove('dov');}
+function doDrop(e){e.preventDefault();dol();const f=e.dataTransfer.files[0];
+  if(f&&f.type==='application/pdf')doRead(f);else toast('صرف PDF فائل!');}
+
+function doRead(f){
+  showLdg('PDF محفوظ اور لوڈ ہو رہی ہے...');
+  const fr=new FileReader();
+  fr.onload=async e=>{
+    const buf=e.target.result;
+    try{await idbPut(buf,f.name);localStorage.setItem('tqname',f.name);}catch(x){}
+    await initPDF(buf,f.name,true);
+  };
+  fr.readAsArrayBuffer(f);
+}
+async function loadCached(){
+  showLdg('محفوظ PDF کھل رہی ہے...');
+  try{const r=await idbGet();if(r)await initPDF(r.buf,r.name,false);
+    else{toast('کوئی محفوظ PDF نہیں');showUp();}}
+  catch(e){toast('خرابی');showUp();}
+}
+async function initPDF(buf,name,isNew){
+  try{
+    PDF=await pdfjsLib.getDocument({data:new Uint8Array(buf)}).promise;
+    totPg=PDF.numPages;
+    document.getElementById('pgof').textContent=`/ ${totPg}`;
+    document.getElementById('pgi').max=totPg;
+    document.getElementById('qjslider').max=totPg;
+    document.getElementById('pgc').style.display='flex';
+    document.getElementById('ldg').style.display='none';
+    document.getElementById('tbtitle').textContent=name.replace('.pdf','');
+    updPill();
+    rlists();
+    if(isNew && offset===0){
+      // First load: show calibration box first
+      document.getElementById('upz').style.display='none';
+      document.getElementById('calbox').classList.add('on');
+      document.getElementById('cw').style.display='flex';
+      const lp=parseInt(localStorage.getItem('tqlp'))||1;
+      renderPg(lp);
+    }else{
+      document.getElementById('upz').style.display='none';
+      document.getElementById('calbox').classList.remove('on');
+      document.getElementById('cw').style.display='flex';
+      const lp=parseInt(localStorage.getItem('tqlp'))||1;
+      renderPg(Math.min(lp,totPg));
+    }
+    toast(`✓ لوڈ — ${totPg} صفحات`);
+    if(progBarOn)document.getElementById('read-prog').classList.add('on');
+    // Show permanent audio bar
+    document.getElementById('audio-mini').classList.add('on');
+    document.body.classList.add('audio-bar-on');
+  }catch(e){showUp();toast('PDF لوڈ نہیں ہوئی');}
+}
+function showLdg(t){
+  document.getElementById('upz').style.display='none';
+  document.getElementById('ldg').style.display='flex';
+  document.getElementById('ltxt').textContent=t||'لوڈ ہو رہی ہے...';
+  document.getElementById('cw').style.display='none';
+  document.getElementById('calbox').classList.remove('on');
+}
+function showUp(){
+  document.getElementById('ldg').style.display='none';
+  document.getElementById('upz').style.display='flex';
+  document.getElementById('cw').style.display='none';
+  document.getElementById('calbox').classList.remove('on');
+}
+
+// ═══════════════════════════════════════
+// RENDER
+async function renderPg(n){
+  if(!PDF)return;
+  // save scroll position of current page before switching
+  if(curPg&&curPg!==n)saveScrollMem(curPg);
+  if(rtask){try{rtask.cancel();}catch(e){}}
+  const pg=await PDF.getPage(n);
+  const cv=document.getElementById('cv');
+  const ctx=cv.getContext('2d');
+  const paW=document.getElementById('pa').clientWidth;
+  // in double page mode each canvas gets ~half width
+  const w=dblPage
+    ? Math.min(paW/2-16,600)
+    : Math.min(paW-24,1200);
+  const vp0=pg.getViewport({scale:1});
+  const vp=pg.getViewport({scale:zoom*(w/vp0.width)});
+  cv.width=vp.width;cv.height=vp.height;
+  cv.style.maxWidth='100%';
+  rtask=pg.render({canvasContext:ctx,viewport:vp});
+  try{await rtask.promise;
+    cv.classList.add('glow');setTimeout(()=>cv.classList.remove('glow'),800);
+  }catch(e){}
+  curPg=n;
+  document.getElementById('pgi').value=n;
+  document.getElementById('btnp').disabled=n<=1;
+  document.getElementById('btnn').disabled=n>=totPg;
+  localStorage.setItem('tqlp',n);
+  updBMBtn();
+  document.getElementById('bm-cur-pg').textContent=n;
+  addHist(n);updQJ();updNoteDot();
+  if(dblPage)renderDblPage(n);
+  else document.getElementById('cv2').style.display='none';
+  if(thumbsOn)buildThumbs(n);
+  updProgBar();
+  // track read pages in stats
+  readPages.add(n);
+  // restore scroll memory for this page
+  restoreScrollMem(n);
+  // update audio labels for this page
+  if(PDF){
+    const {surahNum,ayah,surahName}=getPageSurahAyah(n);
+    // صرف اس وقت آڈیو اپڈیٹ کریں جب صفحہ خود بخود بدلے
+    // اگر صارف نے فہرست سے انتخاب کیا ہو تو مت بدلو
+    if(!audioPlaying && !audioManualSet){audioSurah=surahNum;audioAyah=ayah;}
+    updAudioLabels();
+    // auto audio if enabled
+    if(audioAutoPlay)triggerAutoAudio(n);
+  }
+  // auto-highlight current surah
+  let f=-1;
+  for(let i=APK.length-1;i>=0;i--){if(sPg(i)<=n){f=i;break;}}
+  if(f>=0&&f!==actS){
+    document.querySelectorAll('.sr.act').forEach(el=>el.classList.remove('act'));
+    document.querySelectorAll(`#sr-${f}`).forEach(el=>el.classList.add('act'));
+  }
+}
+function chPg(d){if(PDF){audioManualSet=false;goP(curPg+d);}}
+function goPgInp(){const v=parseInt(document.getElementById('pgi').value);if(!isNaN(v)){audioManualSet=false;goP(v);}}
+function chZ(d){zoom=Math.max(.3,Math.min(5,zoom+d));if(PDF)renderPg(curPg);}
+function fitZ(){zoom=1.3;if(PDF)renderPg(curPg);}
+
+// ═══════════════════════════════════════
+// PINCH-TO-ZOOM (touch)
+let _pt=null,_pz=1;
+document.getElementById('pa').addEventListener('touchstart',e=>{
+  if(e.touches.length===2){
+    e.preventDefault();
+    _pt=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,
+                   e.touches[0].clientY-e.touches[1].clientY);
+    _pz=zoom;
+  }
+},{passive:false});
+document.getElementById('pa').addEventListener('touchmove',e=>{
+  if(e.touches.length===2&&_pt){
+    e.preventDefault();
+    const dist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,
+                          e.touches[0].clientY-e.touches[1].clientY);
+    const nz=Math.max(.3,Math.min(5,_pz*(dist/_pt)));
+    zoom=nz;
+    if(PDF)renderPg(curPg);
+  }
+},{passive:false});
+document.getElementById('pa').addEventListener('touchend',e=>{
+  if(e.touches.length<2)_pt=null;
+},{passive:true});
+
+// ═══════════════════════════════════════
+// MODAL
+// SHIFT ALL PARAS by delta
+function shiftAllPara(delta){
+  PR.forEach((p,i)=>{
+    const cur=customPara[i]!=null?customPara[i]:q2pdf(p.p);
+    customPara[i]=Math.max(1, cur+delta);
+  });
+  svSt();rlists();updModLbls();
+  if(document.getElementById('modal').classList.contains('on')) buildPTbl();
+  toast(`تمام پارے ${delta>=0?'+':''}${delta} — پارہ ۱ اب ص ${paraPg(0)}`);
+}
+function resetAllPara(){
+  if(!confirm('تمام پاروں کے صفحے ڈیفالٹ کریں؟'))return;
+  customPara={};
+  svSt();rlists();updModLbls();
+  if(document.getElementById('modal').classList.contains('on')) buildPTbl();
+  toast('تمام پارے ڈیفالٹ ہوگئے');
+}
+function applyPara1(){
+  const v=parseInt(document.getElementById('p1inp').value);
+  if(isNaN(v)||v<1){document.getElementById('p1res').textContent='درست نمبر لکھیں';return;}
+  // para 1 APK page = PR[0].p; shift all paras by same delta
+  const delta=v-paraPg(0);
+  PR.forEach((p,i)=>{
+    const cur=customPara[i]!=null?customPara[i]:q2pdf(p.p);
+    customPara[i]=Math.max(1, cur+delta);
+  });
+  svSt();rlists();updModLbls();
+  buildPTbl();
+  document.getElementById('p1res').textContent=`✓ پارہ ۱ → ص ${paraPg(0)} | پارہ ۳۰ → ص ${paraPg(29)}`;
+  toast(`✓ تمام پارے ایڈجسٹ — پارہ ۱ → ص ${paraPg(0)}`);
+}
+
+// SHIFT ALL PAGES by delta (changes global offset)
+function shiftAll(delta){
+  offset+=delta;
+  svSt();rlists();updPill();updModLbls();
+  if(document.getElementById('modal').classList.contains('on')){buildMTbl();buildPTbl();}
+  toast(`تمام صفحات ${delta>=0?'+':''}${delta} — الفاتحہ اب ص ${q2pdf(1)}`);
+}
+function updModLbls(){
+  const el1=document.getElementById('cur-off-lbl');
+  const el2=document.getElementById('cur-fat-pg');
+  const el3=document.getElementById('cur-p1-pg');
+  if(el1)el1.textContent=(offset>=0?'+':'')+offset;
+  if(el2)el2.textContent=q2pdf(1);
+  if(el3)el3.textContent=paraPg(0);
+  const mo=document.getElementById('moff');
+  if(mo&&!mo.value)mo.placeholder=`مثلاً ${q2pdf(1)}`;
+}
+
+function buildMTbl(){
+  document.getElementById('mtb').innerHTML=APK.map((s,i)=>{
+    const auto=q2pdf(s.fp);
+    const cur=custom[i]!=null?custom[i]:auto;
+    return`<tr id="mtr${i}">
+      <td style="color:var(--dim);font-size:.7rem">${s.n}</td>
+      <td style="font-family:var(--far);font-size:.8rem">${SN[i]}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:4px">
+          <button onclick="adjRow(${i},-1)" style="width:22px;height:22px;border:1.5px solid var(--bdr);border-radius:5px;background:var(--bg);color:var(--txt);cursor:pointer;font-size:.85rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">−</button>
+          <input type="number" class="pi" id="pi${i}" value="${cur}"
+              min="1" style="width:56px" onchange="onPiChange(${i})">
+          <button onclick="adjRow(${i},1)" style="width:22px;height:22px;border:1.5px solid var(--g3);border-radius:5px;background:var(--g4);color:var(--g2);cursor:pointer;font-size:.85rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">+</button>
+          <button onclick="resetRow(${i})" title="ڈیفالٹ" style="width:22px;height:22px;border:1.5px solid #bbb;border-radius:5px;background:var(--bg);color:#999;cursor:pointer;font-size:.7rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">↺</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function adjRow(i, delta){
+  const inp=document.getElementById(`pi${i}`);
+  const auto=q2pdf(APK[i].fp);
+  const cur=parseInt(inp.value)||auto;
+  const nv=Math.max(1, cur+delta);
+  inp.value=nv;
+  custom[i]=nv;
+  // highlight row
+  const tr=document.getElementById(`mtr${i}`);
+  if(tr){tr.style.background='var(--au3)';setTimeout(()=>tr.style.background='',600);}
+}
+function onPiChange(i){
+  const v=parseInt(document.getElementById(`pi${i}`).value);
+  custom[i]=(isNaN(v)||v<1)?null:v;
+}
+function resetRow(i){
+  custom[i]=null;
+  const auto=q2pdf(APK[i].fp);
+  document.getElementById(`pi${i}`).value=auto;
+  const tr=document.getElementById(`mtr${i}`);
+  if(tr){tr.style.background='var(--g4)';setTimeout(()=>tr.style.background='',600);}
+}
+function buildPTbl(){
+  document.getElementById('ptb').innerHTML=PR.map((p,i)=>{
+    const auto=q2pdf(p.p);
+    const cur=customPara[i]!=null?customPara[i]:auto;
+    return`<tr id="ptr${i}">
+      <td style="color:var(--dim);font-size:.7rem">${p.n}</td>
+      <td style="font-family:var(--far);font-size:.8rem">${p.nm}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:4px">
+          <button onclick="adjPara(${i},-1)" style="width:22px;height:22px;border:1.5px solid var(--bdr);border-radius:5px;background:var(--bg);color:var(--txt);cursor:pointer;font-size:.85rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">−</button>
+          <input type="number" class="pi" id="ppi${i}" value="${cur}" min="1" style="width:56px" onchange="onPpiChange(${i})">
+          <button onclick="adjPara(${i},1)" style="width:22px;height:22px;border:1.5px solid var(--g3);border-radius:5px;background:var(--g4);color:var(--g2);cursor:pointer;font-size:.85rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">+</button>
+          <button onclick="resetPara(${i})" title="ڈیفالٹ" style="width:22px;height:22px;border:1.5px solid #bbb;border-radius:5px;background:var(--bg);color:#999;cursor:pointer;font-size:.7rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">↺</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+function adjPara(i, delta){
+  const inp=document.getElementById(`ppi${i}`);
+  const cur=parseInt(inp.value)||q2pdf(PR[i].p);
+  const nv=Math.max(1, cur+delta);
+  inp.value=nv;
+  customPara[i]=nv;
+  const tr=document.getElementById(`ptr${i}`);
+  if(tr){tr.style.background='var(--au3)';setTimeout(()=>tr.style.background='',600);}
+}
+function onPpiChange(i){
+  const v=parseInt(document.getElementById(`ppi${i}`).value);
+  customPara[i]=(isNaN(v)||v<1)?null:v;
+}
+function resetPara(i){
+  customPara[i]=null;
+  document.getElementById(`ppi${i}`).value=q2pdf(PR[i].p);
+  const tr=document.getElementById(`ptr${i}`);
+  if(tr){tr.style.background='var(--g4)';setTimeout(()=>tr.style.background='',600);}
+}
+
+function openMod(){
+  document.getElementById('moff').value='';
+  updModLbls();
+  buildMTbl();
+  buildPTbl();
+  document.getElementById('modal').classList.add('on');
+}
+function closeMod(){document.getElementById('modal').classList.remove('on');}
+function saveMod(){
+  APK.forEach((s,i)=>{
+    const v=parseInt(document.getElementById(`pi${i}`).value);
+    custom[i]=(isNaN(v)||v<1)?null:v;
+  });
+  PR.forEach((p,i)=>{
+    const v=parseInt(document.getElementById(`ppi${i}`).value);
+    customPara[i]=(isNaN(v)||v<1)?null:v;
+  });
+  const moff=parseInt(document.getElementById('moff').value);
+  if(!isNaN(moff)&&moff>=1)offset=moff-1;
+  svSt();rlists();updPill();closeMod();toast('✓ محفوظ ہوگئی');
+}
+function resetMod(){
+  if(!confirm('سب ڈیفالٹ کریں؟'))return;
+  custom={};customPara={};offset=4;svSt();openMod();rlists();updPill();toast('ڈیفالٹ ہوگئی (آفسیٹ +4)');
+}
+async function delPDF(){
+  if(!confirm('محفوظ PDF ہٹائیں؟'))return;
+  try{await idbDel();}catch(e){}
+  localStorage.removeItem('tqname');localStorage.removeItem('tqlp');
+  PDF=null;totPg=0;curPg=1;
+  document.getElementById('pgc').style.display='none';
+  document.getElementById('cbn').style.display='none';
+  document.getElementById('tbtitle').textContent='القرآن الکریم';
+  showUp();closeMod();toast('PDF ہٹادی گئی');
+}
+
+// ═══════════════════════════════════════
+// SIDEBAR / TABS
+function deskToggle(){document.getElementById('dsb').classList.toggle('cl');}
+function filS(){rlists(document.getElementById('sbsr').value);}
+function filSM(){rlists(document.getElementById('mobsr').value);}
+function swTab(t,el){
+  el.closest('.stabs').querySelectorAll('.stab').forEach(x=>x.classList.remove('on'));
+  el.classList.add('on');
+  const body=el.closest('.sb,.md').querySelector('.sbb');
+  body.querySelectorAll('.tp').forEach(x=>x.classList.remove('on'));
+  body.querySelector(`#tp${t===undefined?'s':t},#mtp${t}`).classList.add('on');
+}
+function swMT(t,el){
+  ['s','p'].forEach(x=>{
+    document.getElementById(`mts`.replace('s',x==='s'?'s':'p')).classList.remove('on');
+    document.getElementById(`mtps`.replace('s',x)).classList.remove('on');
+  });
+  document.getElementById(`mt${t}`).classList.add('on');
+  document.getElementById(`mtp${t}`).classList.add('on');
+}
+function openMob(m){
+  document.getElementById('mov').classList.add('on');
+  document.getElementById('mdraw').classList.add('on');
+  swMT(m,document.getElementById(`mt${m}`));
+}
+function closeMob(){
+  document.getElementById('mov').classList.remove('on');
+  document.getElementById('mdraw').classList.remove('on');
+}
+
+// ═══════════════════════════════════════
+// DARK
+function togDk(){
+  dark=!dark;document.body.classList.toggle('dk',dark);
+  localStorage.setItem('tqdk',dark?'1':'0');
+  document.getElementById('dkico').innerHTML=dark
+    ?'<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>'
+    :'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+}
+
+// ═══════════════════════════════════════
+// TOAST + KEYBOARD
+let tt;
+function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('on'),2800);}
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT')return;
+  if(e.key==='ArrowLeft'||e.key==='ArrowDown')chPg(1);
+  else if(e.key==='ArrowRight'||e.key==='ArrowUp')chPg(-1);
+  else if(e.key==='+'||e.key==='=')chZ(.2);
+  else if(e.key==='-')chZ(-.2);
+  else if(e.key==='Escape'){closeMod();closeMob();}
+});
+
+// ═══════════════════════════════════════
+// BOOKMARK
+let bookmarks=[];
+function ldBM(){try{bookmarks=JSON.parse(localStorage.getItem('tqbm')||'[]');}catch(e){bookmarks=[];}}
+function svBM(){localStorage.setItem('tqbm',JSON.stringify(bookmarks));}
+ldBM();
+
+function toggleBM(){
+  const p=document.getElementById('bmpanel');
+  const btn=document.getElementById('bmbtn');
+  const isOn=p.classList.contains('on');
+  closeMob();
+  if(isOn){p.classList.remove('on');btn.classList.remove('on');}
+  else{renderBMList();p.classList.add('on');btn.classList.add('on');
+       document.getElementById('bm-cur-pg').textContent=PDF?curPg:'—';}
+}
+function closeBM(){
+  document.getElementById('bmpanel').classList.remove('on');
+  document.getElementById('bmbtn').classList.remove('on');
+}
+function addBM(){
+  if(!PDF){toast('پہلے PDF لوڈ کریں');return;}
+  if(bookmarks.find(b=>b.pg===curPg)){toast('یہ صفحہ پہلے سے محفوظ ہے');return;}
+  // find surah name for this page
+  let sname='';
+  for(let i=APK.length-1;i>=0;i--){if(sPg(i)<=curPg){sname=SU[i];break;}}
+  const bm={pg:curPg,lbl:sname,ts:Date.now()};
+  bookmarks.unshift(bm);
+  if(bookmarks.length>30)bookmarks=bookmarks.slice(0,30);
+  svBM();renderBMList();
+  document.getElementById('bmbtn').classList.add('bm-active');
+  toast(`🔖 صفحہ ${curPg} محفوظ ہوگیا`);
+}
+function delBM(ts){
+  bookmarks=bookmarks.filter(b=>b.ts!==ts);
+  svBM();renderBMList();
+  if(bookmarks.length===0)document.getElementById('bmbtn').classList.remove('bm-active');
+  toast('بک مارک ہٹادیا');
+}
+function renderBMList(){
+  const el=document.getElementById('bmlist');
+  if(!bookmarks.length){el.innerHTML='<div class="bm-empty">ابھی کوئی بک مارک نہیں<br>نیچے والا بٹن دبائیں</div>';return;}
+  el.innerHTML=bookmarks.map(b=>`
+    <div class="bmrow" onclick="goP(${b.pg});closeBM()">
+      <span class="bmrow-ico">🔖</span>
+      <div class="bmrow-info">
+        <span class="bmrow-pg">صفحہ ${b.pg}</span>
+        <span class="bmrow-lbl">${b.lbl||''}</span>
+      </div>
+      <button class="bmrow-del" onclick="event.stopPropagation();delBM(${b.ts})">✕</button>
+    </div>`).join('');
+  // update cur page indicator
+  document.getElementById('bm-cur-pg').textContent=PDF?curPg:'—';
+  // highlight btn if current page is bookmarked
+  document.getElementById('bmbtn').classList.toggle('bm-active',bookmarks.some(b=>b.pg===curPg));
+}
+function updBMBtn(){
+  if(!bookmarks.length){document.getElementById('bmbtn').classList.remove('bm-active');return;}
+  document.getElementById('bmbtn').classList.toggle('bm-active',bookmarks.some(b=>b.pg===curPg));
+}
+
+// ═══════════════════════════════════════
+// SEPIA MODE
+let sepia=false;
+function togSepia(){
+  sepia=!sepia;
+  document.body.classList.toggle('sepia',sepia);
+  // can't have both dark and sepia
+  if(sepia&&dark){dark=false;document.body.classList.remove('dk');
+    document.getElementById('dkico').innerHTML='<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';}
+  document.getElementById('sepiabtn').style.background=sepia?'rgba(194,138,0,.5)':'';
+  localStorage.setItem('tqsp',sepia?'1':'0');
+  if(PDF)renderPg(curPg);
+  toast(sepia?'☀ سیپیا موڈ آن':'سیپیا موڈ آف');
+}
+
+// ═══════════════════════════════════════
+// SWIPE NAVIGATION (single finger)
+let _sx=null,_sy=null;
+document.getElementById('pa').addEventListener('touchstart',e=>{
+  if(e.touches.length===1){_sx=e.touches[0].clientX;_sy=e.touches[0].clientY;}
+},{passive:true});
+document.getElementById('pa').addEventListener('touchend',e=>{
+  if(_sx===null||e.changedTouches.length!==1)return;
+  const dx=e.changedTouches[0].clientX-_sx;
+  const dy=e.changedTouches[0].clientY-_sy;
+  if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5){
+    if(dx<0)chPg(1); else chPg(-1);
+  }
+  _sx=null;_sy=null;
+},{passive:true});
+
+// ═══════════════════════════════════════
+// SCREEN ROTATE
+let rotated=false;
+function toggleRotate(){
+  const chk=document.getElementById('rot-tgl');
+  rotated=chk?chk.checked:!rotated;
+  if(rotated){
+    if(screen.orientation&&screen.orientation.lock){
+      screen.orientation.lock('landscape').catch(()=>cssRotate(true));
+    } else cssRotate(true);
+    toast('لینڈ اسکیپ موڈ');
+  } else {
+    if(screen.orientation&&screen.orientation.unlock){try{screen.orientation.unlock();}catch(e){}}
+    cssRotate(false);
+    toast('پورٹریٹ موڈ');
+  }
+}
+function cssRotate(on){
+  const lay=document.querySelector('.lay');
+  if(on){
+    const vw=window.innerWidth,vh=window.innerHeight-76-54;
+    lay.style.cssText=`position:fixed;top:54px;left:0;width:${vh}px;height:${vw}px;
+      transform:rotate(90deg) translateY(-${vw}px);transform-origin:top left;overflow:auto;z-index:100;`;
+  } else {lay.style.cssText='';}
+}
+
+// ═══════════════════════════════════════
+// DOUBLE PAGE
+let dblPage=false;
+function toggleDblPage(on){
+  dblPage=on;
+  if(PDF)renderPg(curPg);
+  toast(on?'ڈبل صفحہ آن':'ایک صفحہ');
+}
+async function renderDblPage(n){
+  const cv2=document.getElementById('cv2');
+  if(!dblPage||n>=totPg){cv2.style.display='none';return;}
+  cv2.style.display='block';
+  const pg2=await PDF.getPage(n+1);
+  const w=Math.min(document.getElementById('pa').clientWidth/2-20,600);
+  const vp0=pg2.getViewport({scale:1});
+  const vp=pg2.getViewport({scale:zoom*(w/vp0.width)});
+  cv2.width=vp.width;cv2.height=vp.height;
+  cv2.style.maxWidth='100%';cv2.style.boxShadow='0 6px 36px rgba(0,0,0,.2)';
+  cv2.style.borderRadius='5px';cv2.style.background='#fff';
+  const ctx2=cv2.getContext('2d');
+  await pg2.render({canvasContext:ctx2,viewport:vp}).promise.catch(()=>{});
+}
+
+// ═══════════════════════════════════════
+// FONT SIZE
+let fsLvl=0; // -3 to +5
+const fsSteps=[70,80,90,100,110,125,140,160,180];
+function chFS(d){
+  fsLvl=Math.max(0,Math.min(fsSteps.length-1,fsLvl+d));
+  const pct=fsSteps[fsLvl];
+  document.documentElement.style.fontSize=pct+'%';
+  document.getElementById('fslbl').textContent=pct+'%';
+  localStorage.setItem('tqfs',fsLvl);
+}
+function ldFS(){
+  try{fsLvl=parseInt(localStorage.getItem('tqfs'))||3;}catch(e){fsLvl=3;}
+  const pct=fsSteps[fsLvl];
+  document.documentElement.style.fontSize=pct+'%';
+  if(document.getElementById('fslbl'))document.getElementById('fslbl').textContent=pct+'%';
+}
+
+// ═══════════════════════════════════════
+// QUICK JUMP SLIDER
+function toggleQJ(on){
+  document.getElementById('qjbar').classList.toggle('on',on);
+  document.querySelector('.lay').classList.toggle('qjopen',on);
+}
+function closeQJ(){
+  document.getElementById('qjbar').classList.remove('on');
+  document.querySelector('.lay').classList.remove('qjopen');
+  // uncheck the toggle in tools panel
+  const tgl=document.getElementById('qj-tgl');
+  if(tgl)tgl.checked=false;
+}
+function onQJ(v){
+  document.getElementById('qjval').textContent=`${v} / ${totPg}`;
+}
+function doQJ(v){
+  if(PDF)goP(parseInt(v));
+}
+function updQJ(){
+  const sl=document.getElementById('qjslider');
+  sl.max=totPg||1;sl.value=curPg;
+  document.getElementById('qjval').textContent=`${curPg} / ${totPg}`;
+}
+
+// ═══════════════════════════════════════
+// PAGE HISTORY
+let pgHist=[];
+function ldHist(){try{pgHist=JSON.parse(localStorage.getItem('tqhist')||'[]');}catch(e){pgHist=[];}}
+function svHist(){localStorage.setItem('tqhist',JSON.stringify(pgHist.slice(0,20)));}
+function addHist(n){
+  pgHist=pgHist.filter(h=>h.pg!==n);
+  let sname='';
+  for(let i=APK.length-1;i>=0;i--){if(sPg(i)<=n){sname=SU[i];break;}}
+  pgHist.unshift({pg:n,lbl:sname,ts:Date.now()});
+  if(pgHist.length>20)pgHist=pgHist.slice(0,20);
+  svHist();
+}
+function renderHist(){
+  const el=document.getElementById('histlist');
+  if(!el)return;
+  if(!pgHist.length){el.innerHTML='<div style="color:rgba(255,255,255,.3);font-size:.72rem;padding:8px 0">ابھی کوئی تاریخ نہیں</div>';return;}
+  el.innerHTML=pgHist.slice(0,10).map(h=>{
+    const d=new Date(h.ts);
+    const t=`${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;
+    return`<div class="hrow" onclick="goP(${h.pg});closeTools()">
+      <span class="hrow-pg">ص ${h.pg}</span>
+      <span class="hrow-lbl">${h.lbl||''}</span>
+      <span class="hrow-t">${t}</span>
+    </div>`;
+  }).join('');
+}
+ldHist();
+
+// ═══════════════════════════════════════
+// NOTES
+let notes={};
+function ldNotes(){try{notes=JSON.parse(localStorage.getItem('tqnotes')||'{}');}catch(e){notes=[];}}
+function svNotes(){localStorage.setItem('tqnotes',JSON.stringify(notes));}
+ldNotes();
+function updNoteDot(){
+  const btn=document.getElementById('notedot');
+  if(notes[curPg]&&notes[curPg].trim()){btn.classList.add('on');}
+  else{btn.classList.remove('on');}
+}
+function loadNoteTA(){
+  document.getElementById('note-ta').value=notes[curPg]||'';
+  document.getElementById('note-pg-lbl').textContent=curPg;
+}
+function saveNote(){
+  const v=document.getElementById('note-ta').value.trim();
+  if(v){notes[curPg]=v;}else{delete notes[curPg];}
+  svNotes();updNoteDot();toast('📝 نوٹ محفوظ');
+}
+function delNote(){
+  delete notes[curPg];
+  document.getElementById('note-ta').value='';
+  svNotes();updNoteDot();toast('نوٹ ہٹادیا');
+}
+
+// ═══════════════════════════════════════
+// THUMBNAILS
+let thumbsOn=false;
+function toggleThumbs(on){
+  thumbsOn=on;
+  document.getElementById('thumbstrip').classList.toggle('on',on);
+  if(on&&PDF)buildThumbs(curPg);
+}
+async function buildThumbs(n){
+  const strip=document.getElementById('thumbstrip');
+  if(!thumbsOn||!PDF)return;
+  strip.innerHTML='';
+  const pages=[];
+  for(let p=Math.max(1,n-2);p<=Math.min(totPg,n+4);p++)pages.push(p);
+  for(const p of pages){
+    const wrap=document.createElement('div');
+    wrap.className='thumb'+(p===n?' act':'');
+    wrap.onclick=()=>goP(p);
+    const tc=document.createElement('canvas');
+    const tlbl=document.createElement('div');
+    tlbl.className='thumb-pg';tlbl.textContent=p;
+    wrap.appendChild(tc);wrap.appendChild(tlbl);
+    strip.appendChild(wrap);
+    // render small
+    try{
+      const pg=await PDF.getPage(p);
+      const vp0=pg.getViewport({scale:1});
+      const sc=60/vp0.width;
+      const vp=pg.getViewport({scale:sc});
+      tc.width=vp.width;tc.height=vp.height;
+      await pg.render({canvasContext:tc.getContext('2d'),viewport:vp}).promise;
+    }catch(e){}
+  }
+}
+
+// ═══════════════════════════════════════
+// TOOLS PANEL
+function toggleTools(){
+  const p=document.getElementById('toolpanel');
+  const isOn=p.classList.contains('on');
+  closeBM();
+  if(isOn){closeTools();}
+  else{
+    loadNoteTA();renderHist();
+    p.classList.add('on');
+    document.getElementById('toolbtn').classList.add('on');
+  }
+}
+function closeTools(){
+  document.getElementById('toolpanel').classList.remove('on');
+  document.getElementById('toolbtn').classList.remove('on');
+}
+function openTools(section){
+  const p=document.getElementById('toolpanel');
+  if(!p.classList.contains('on'))toggleTools();
+  populateDlSelects();
+  updCacheInfo();
+  if(section==='note'){
+    setTimeout(()=>{
+      const ns=document.getElementById('note-sec');
+      if(ns)ns.scrollIntoView({behavior:'smooth',block:'start'});
+    },100);
+  }
+}
+// close on outside click
+document.addEventListener('click',e=>{
+  const panel=document.getElementById('toolpanel');
+  const btn=document.getElementById('toolbtn');
+  if(panel.classList.contains('on')&&!panel.contains(e.target)&&e.target!==btn&&!btn.contains(e.target)){
+    closeTools();
+  }
+});
+
+// close bm panel on overlay click
+document.addEventListener('click',e=>{
+  const panel=document.getElementById('bmpanel');
+  const btn=document.getElementById('bmbtn');
+  if(panel.classList.contains('on')&&!panel.contains(e.target)&&e.target!==btn&&!btn.contains(e.target)){
+    closeBM();
+  }
+});
+
+// ═══════════════════════════════════════
+// WAKE LOCK — اسکرین آن رکھیں
+let wakeLock=null,wlEnabled=false;
+async function toggleWakeLock(on){
+  wlEnabled=on;
+  if(on){
+    if('wakeLock' in navigator){
+      try{
+        wakeLock=await navigator.wakeLock.request('screen');
+        wakeLock.addEventListener('release',()=>{
+          document.getElementById('wl-badge').classList.remove('on');
+          // auto re-acquire if still enabled
+          if(wlEnabled)setTimeout(()=>toggleWakeLock(true),1000);
+        });
+        document.getElementById('wl-badge').classList.add('on');
+        toast('📺 اسکرین آن رہے گی');
+        localStorage.setItem('tqwl','1');
+      }catch(e){
+        toast('⚠ یہ ڈیوائس سپورٹ نہیں کرتی');
+        document.getElementById('wl-tgl').checked=false;
+        wlEnabled=false;
+      }
+    } else {
+      toast('⚠ براؤزر سپورٹ نہیں');
+      document.getElementById('wl-tgl').checked=false;
+      wlEnabled=false;
+    }
+  } else {
+    if(wakeLock){try{await wakeLock.release();}catch(e){}}
+    wakeLock=null;
+    document.getElementById('wl-badge').classList.remove('on');
+    localStorage.setItem('tqwl','0');
+    toast('اسکرین آٹو آف فعال');
+  }
+}
+// re-acquire wake lock when page becomes visible again
+document.addEventListener('visibilitychange',async()=>{
+  if(document.visibilityState==='visible'&&wlEnabled&&!wakeLock){
+    try{
+      wakeLock=await navigator.wakeLock.request('screen');
+      document.getElementById('wl-badge').classList.add('on');
+    }catch(e){}
+  }
+});
+
+// ═══════════════════════════════════════
+// READING PROGRESS BAR
+let progBarOn=true;
+function toggleProgBar(on){
+  progBarOn=on;
+  const bar=document.getElementById('read-prog');
+  if(on&&PDF){bar.classList.add('on');updProgBar();}
+  else{bar.classList.remove('on');}
+  localStorage.setItem('tqprog',on?'1':'0');
+}
+function updProgBar(){
+  if(!progBarOn||!PDF)return;
+  const pct=totPg>1?((curPg-1)/(totPg-1)):1;
+  // RTL: progress from right to left (Quran reads RTL)
+  document.getElementById('read-prog').style.transform=`scaleX(${pct})`;
+  document.getElementById('read-prog').classList.add('on');
+}
+
+// ═══════════════════════════════════════
+// SHARE CURRENT PAGE
+async function sharePg(){
+  if(!PDF){toast('پہلے PDF لوڈ کریں');return;}
+  let sname='';
+  for(let i=APK.length-1;i>=0;i--){if(sPg(i)<=curPg){sname=SU[i];break;}}
+  const txt=`📖 القرآن الکریم — صفحہ ${curPg}${sname?' | '+sname:''} (کل: ${totPg} صفحات)`;
+  if(navigator.share){
+    try{await navigator.share({title:'القرآن الکریم',text:txt});return;}catch(e){}
+  }
+  // fallback: copy to clipboard
+  try{
+    await navigator.clipboard.writeText(txt);
+    toast('📋 کلپ بورڈ میں محفوظ');
+  }catch(e){toast('شیئر دستیاب نہیں');}
+}
+
+// ═══════════════════════════════════════
+// AUDIO RECITATION
+let audioSurah=1,audioAyah=1,audioPlaying=false,audioReciter='Abdul_Basit_Murattal_64kbps';
+let audioAutoPlay=false;
+let audioManualSet=false; // true = user picked surah/ayah manually, don't auto-override
+
+// Compute verse offsets (cumulative ayahs per surah from APK data)
+function getAyahOffset(surahIdx){
+  let total=0;
+  for(let i=0;i<surahIdx;i++) total+=APK[i].ta;
+  return total;
+}
+
+function audioUrl(surah,ayah){
+  const s=String(surah).padStart(3,'0');
+  const a=String(ayah).padStart(3,'0');
+  return `https://everyayah.com/data/${audioReciter}/${s}${a}.mp3`;
+}
+
+function changeReciter(v){
+  audioReciter=v;
+  // sync both selectors
+  ['reciter-sel','mini-reciter-sel'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.value=v;
+  });
+  if(audioPlaying){stopAudioCompletely();toast('قاری بدل گیا — دوبارہ چلائیں');}
+}
+
+// ═══════════════════════════════════════
+// PAGE → SURAH/AYAH MAP (16-line Taj Company Quran, 604 pages)
+// Index = PDF page number (after applying offset=0 for this Quran)
+const PAGE16L=[null,[1,1],[2,1],[2,8],[2,13],[2,21],[2,30],[2,40],[2,40],[2,60],[2,60],[2,62],[2,72],[2,83],[2,83],[2,87],[2,97],[2,104],[2,104],[2,113],[2,122],[2,122],[2,130],[2,148],[2,148],[2,164],[2,164],[2,168],[2,177],[2,177],[2,183],[2,183],[2,189],[2,189],[2,197],[2,211],[2,217],[2,217],[2,222],[2,229],[2,232],[2,236],[2,243],[2,249],[2,254],[2,261],[2,267],[2,268],[2,274],[2,284],[3,1],[3,10],[3,21],[3,23],[3,31],[3,42],[3,45],[3,64],[3,72],[3,72],[3,92],[3,102],[3,102],[3,121],[3,130],[3,144],[3,149],[3,149],[3,156],[3,172],[3,172],[3,181],[3,181],[3,181],[3,181],[3,190],[3,193],[4,1],[4,11],[4,15],[4,23],[4,26],[4,34],[4,37],[4,43],[4,51],[4,60],[4,61],[4,71],[4,77],[4,79],[4,88],[4,97],[4,101],[4,105],[4,113],[4,116],[4,127],[4,128],[4,135],[4,142],[4,146],[4,153],[4,163],[4,164],[4,172],[5,1],[5,6],[5,12],[5,20],[5,27],[5,28],[5,35],[5,39],[5,44],[5,51],[5,57],[5,60],[5,67],[5,71],[5,78],[5,87],[5,88],[5,94],[5,101],[5,104],[5,109],[5,116],[6,1],[6,11],[6,21],[6,22],[6,31],[6,42],[6,51],[6,56],[6,61],[6,71],[6,72],[6,91],[6,91],[6,95],[6,101],[6,111],[6,122],[6,122],[6,130],[6,141],[6,145],[6,155],[6,158],[7,1],[7,11],[7,17],[7,32],[7,33],[7,40],[7,54],[7,59],[7,65],[7,73],[7,85],[7,94],[7,100],[7,109],[7,127],[7,127],[7,130],[7,148],[7,148],[7,158],[7,163],[7,172],[7,174],[7,189],[7,190],[7,198],[8,1],[8,11],[8,20],[8,29],[8,31],[8,45],[8,49],[8,59],[8,65],[8,70],[9,1],[9,7],[9,17],[9,19],[9,30],[9,31],[9,43],[9,44],[9,50],[9,60],[9,67],[9,73],[9,74],[9,81],[9,90],[9,92],[9,100],[9,105],[9,111],[9,119],[9,123],[10,1],[10,11],[10,21],[10,31],[10,41],[10,43],[10,54],[10,61],[10,71],[10,83],[10,84],[10,93],[10,104],[11,9],[11,10],[11,25],[11,27],[11,36],[11,50],[11,61],[11,69],[11,71],[11,84],[11,96],[11,97],[11,110],[11,114],[12,7],[12,9],[12,21],[12,30],[12,36],[12,43],[12,50],[12,58],[12,69],[12,72],[12,80],[12,94],[12,95],[12,105],[13,1],[13,8],[13,19],[13,27],[13,32],[13,38],[14,7],[14,13],[14,22],[14,28],[14,35],[14,42],[14,45],[15,16],[15,26],[15,45],[15,61],[15,80],[16,1],[16,22],[16,26],[16,26],[16,41],[16,51],[16,61],[16,71],[16,71],[16,84],[16,90],[16,101],[16,103],[16,111],[16,120],[17,1],[17,11],[17,23],[17,31],[17,41],[17,53],[17,61],[17,78],[17,85],[17,94],[17,101],[18,13],[18,18],[18,23],[18,32],[18,45],[18,54],[18,60],[18,71],[18,74],[18,83],[18,92],[18,102],[19,1],[19,16],[19,41],[19,51],[19,66],[19,83],[19,84],[20,1],[20,25],[20,28],[20,41],[20,55],[20,77],[20,90],[20,105],[20,116],[20,129],[21,11],[21,12],[21,30],[21,42],[21,51],[21,56],[21,76],[21,79],[21,94],[21,101],[22,1],[22,11],[22,23],[22,26],[22,39],[22,40],[22,49],[22,58],[22,65],[22,73],[23,1],[23,23],[23,33],[23,51],[23,60],[23,78],[23,93],[23,103],[24,1],[24,11],[24,21],[24,27],[24,35],[24,41],[24,43],[24,51],[24,62],[25,1],[25,10],[25,21],[25,35],[25,45],[25,48],[25,61],[25,68],[26,10],[26,34],[26,53],[26,70],[26,105],[26,123],[26,141],[26,176],[26,192],[26,204],[27,1],[27,15],[27,32],[27,45],[27,47],[27,67],[27,70],[27,83],[28,1],[28,14],[28,22],[28,29],[28,33],[28,43],[28,51],[28,61],[28,64],[28,76],[28,80],[29,1],[29,14],[29,23],[29,31],[29,35],[29,45],[29,52],[29,64],[30,1],[30,11],[30,20],[30,28],[30,41],[30,43],[30,54],[31,1],[31,12],[31,20],[31,26],[32,1],[32,12],[32,23],[33,1],[33,9],[33,21],[33,28],[33,35],[33,41],[33,44],[33,53],[33,59],[33,69],[34,1],[34,10],[34,22],[34,31],[34,37],[34,46],[35,1],[35,15],[35,16],[35,27],[35,30],[35,38],[36,1],[36,13],[36,33],[36,36],[36,51],[36,68],[36,71],[37,22],[37,31],[37,75],[37,114],[37,139],[37,152],[38,15],[38,27],[38,41],[38,44],[38,65],[38,74],[39,1],[39,10],[39,22],[39,32],[39,42],[39,53],[39,64],[39,71],[40,1],[40,10],[40,21],[40,28],[40,38],[40,43],[40,51],[40,61],[40,69],[40,79],[41,9],[41,10],[41,26],[41,33],[41,36],[41,45],[42,1],[42,10],[42,20],[42,30],[42,36],[42,44],[43,1],[43,16],[43,36],[43,46],[43,57],[43,68],[43,76],[44,1],[44,30],[44,43],[45,12],[45,22],[45,27],[46,1],[46,11],[46,15],[46,27],[46,28],[47,1],[47,12],[47,20],[47,29],[48,1],[48,11],[48,18],[48,27],[49,1],[49,11],[49,12],[50,16],[50,30],[51,1],[51,24],[51,47],[52,1],[52,29],[52,33],[53,26],[53,33],[54,1],[54,23],[54,41],[55,26],[55,46],[55,52],[56,1],[56,39],[56,75],[57,1],[57,11],[57,12],[57,20],[57,26],[58,7],[58,14],[58,15],[59,1],[59,11],[59,12],[59,18],[60,1],[60,7],[61,1],[61,10],[62,9],[63,1],[63,9],[64,1],[64,11],[65,1],[65,8],[66,1],[66,8],[67,15],[67,16],[68,1],[68,34],[69,1],[69,38],[70,1],[70,36],[71,1],[71,21],[72,1],[72,20],[73,20],[74,1],[74,32],[75,1],[75,31],[76,1],[76,23],[77,41],[78,31],[79,1],[79,27],[80,1],[81,1],[83,1],[83,18],[84,1],[85,1],[87,1],[88,1],[89,1],[90,1],[92,1],[94,1],[96,1],[98,1],[100,1],[102,1],[105,1],[108,1],[111,1],[114,1]];
+
+function getPageSurahAyah(pdfPg){
+  // Try 16-line map DIRECTLY (no offset: PAGE16L is indexed by PDF page)
+  if(pdfPg>=1 && pdfPg<PAGE16L.length && PAGE16L[pdfPg]){
+    const [s,a]=PAGE16L[pdfPg];
+    return{si:s-1,surahNum:s,ayah:a,surahName:SU[s-1]||''};
+  }
+  // Fallback: use APK + offset for tafsir/other PDFs
+  let si=0;
+  for(let i=APK.length-1;i>=0;i--){if(sPg(i)<=pdfPg){si=i;break;}}
+  const s=APK[si];
+  let firstAyah=1;
+  for(let r=s.ru.length-1;r>=0;r--){
+    const ruPg=q2pdf(s.ru[r].p);
+    if(ruPg<=pdfPg){firstAyah=s.ru[r].a;break;}
+  }
+  return{si,surahNum:s.n,ayah:firstAyah,surahName:SU[si]||''};
+}
+
+function updAudioLabels(){
+  const name=SU[audioSurah-1]||'';
+  document.getElementById('audio-surah-lbl').textContent=name;
+  document.getElementById('audio-ayah-lbl').textContent=`آیت ${audioAyah}`;
+  document.getElementById('mini-surah-lbl').textContent=name;
+  document.getElementById('mini-ayah-lbl').textContent=`آیت ${audioAyah}`;
+}
+
+function toggleAudio(){
+  const el=document.getElementById('audio-el');
+  if(audioPlaying){
+    el.pause();audioPlaying=false;
+    document.getElementById('audio-play-btn').textContent='▶';
+    document.getElementById('audio-play-btn').classList.remove('active');
+    document.getElementById('mini-play-btn').textContent='▶';
+    document.getElementById('mini-play-btn').classList.remove('active');
+  } else {
+    // اگر صارف نے فہرست سے انتخاب نہ کیا ہو تو موجودہ صفحہ سے شروع کریں
+    if(!audioManualSet && PDF && curPg){
+      const {surahNum,ayah}=getPageSurahAyah(curPg);
+      audioSurah=surahNum; audioAyah=ayah;
+      updAudioLabels();
+    }
+    audioManualSet=false; // پلے کے بعد ریسیٹ — اگلا صفحہ پھر خودبخود اپڈیٹ ہوگا
+    loadAndPlay(audioSurah,audioAyah);
+  }
+}
+
+// ═══════════════════════════════════════
+// AUDIO CACHE — IndexedDB
+const AUDIO_DB='tq_audio_cache';const AUDIO_STORE='clips';
+let audioDB=null;
+function openAudioDB(){
+  return new Promise((res,rej)=>{
+    if(audioDB){res(audioDB);return;}
+    const req=indexedDB.open(AUDIO_DB,1);
+    req.onupgradeneeded=e=>{
+      e.target.result.createObjectStore(AUDIO_STORE);
+    };
+    req.onsuccess=e=>{audioDB=e.target.result;res(audioDB);};
+    req.onerror=()=>rej(req.error);
+  });
+}
+function audioCacheKey(surah,ayah,reciter){
+  return `${reciter}/${String(surah).padStart(3,'0')}${String(ayah).padStart(3,'0')}`;
+}
+async function getFromCache(surah,ayah,reciter){
+  try{
+    const db=await openAudioDB();
+    return new Promise((res)=>{
+      const tx=db.transaction(AUDIO_STORE,'readonly');
+      const req=tx.objectStore(AUDIO_STORE).get(audioCacheKey(surah,ayah,reciter));
+      req.onsuccess=()=>res(req.result||null);
+      req.onerror=()=>res(null);
+    });
+  }catch(e){return null;}
+}
+async function saveToCache(surah,ayah,reciter,blob){
+  try{
+    const db=await openAudioDB();
+    return new Promise((res)=>{
+      const tx=db.transaction(AUDIO_STORE,'readwrite');
+      tx.objectStore(AUDIO_STORE).put(blob,audioCacheKey(surah,ayah,reciter));
+      tx.oncomplete=()=>res(true);
+      tx.onerror=()=>res(false);
+    });
+  }catch(e){return false;}
+}
+async function getCacheSize(){
+  try{
+    const db=await openAudioDB();
+    return new Promise((res)=>{
+      const tx=db.transaction(AUDIO_STORE,'readonly');
+      const req=tx.objectStore(AUDIO_STORE).count();
+      req.onsuccess=()=>res(req.result);
+      req.onerror=()=>res(0);
+    });
+  }catch(e){return 0;}
+}
+async function clearAllCache(){
+  try{
+    const db=await openAudioDB();
+    return new Promise((res)=>{
+      const tx=db.transaction(AUDIO_STORE,'readwrite');
+      tx.objectStore(AUDIO_STORE).clear();
+      tx.oncomplete=()=>res(true);
+      tx.onerror=()=>res(false);
+    });
+  }catch(e){return false;}
+}
+
+// ── Cache-aware loadAndPlay ──
+async function loadAndPlay(surah,ayah){
+  if(!PDF){toast('پہلے PDF لوڈ کریں');return;}
+  audioSurah=surah;audioAyah=ayah;
+  const el=document.getElementById('audio-el');
+  document.getElementById('audio-loading').textContent='⏳ لوڈ ہو رہا ہے...';
+  document.getElementById('mini-loading').textContent='⏳';
+
+  // Try cache first
+  const cached=await getFromCache(surah,ayah,audioReciter);
+  let src;
+  if(cached){
+    src=URL.createObjectURL(cached);
+    document.getElementById('mini-loading').textContent='📥';
+    setTimeout(()=>{if(document.getElementById('mini-loading').textContent==='📥')document.getElementById('mini-loading').textContent='';},1200);
+  } else {
+    src=audioUrl(surah,ayah);
+    // save to cache in background after playing
+    fetch(src).then(r=>r.blob()).then(b=>saveToCache(surah,ayah,audioReciter,b)).catch(()=>{});
+  }
+
+  el.src=src;el.load();
+  el.play().then(()=>{
+    audioPlaying=true;
+    document.getElementById('audio-play-btn').textContent='⏸';
+    document.getElementById('audio-play-btn').classList.add('active');
+    document.getElementById('mini-play-btn').textContent='⏸';
+    document.getElementById('mini-play-btn').classList.add('active');
+    document.getElementById('audio-mini').classList.add('on');
+    document.getElementById('audio-loading').textContent='';
+    document.getElementById('mini-loading').textContent='';
+    updAudioLabels();
+  }).catch(e=>{
+    document.getElementById('audio-loading').textContent='⚠ لوڈ نہیں ہوا — انٹرنیٹ چیک کریں';
+    document.getElementById('mini-loading').textContent='⚠ انٹرنیٹ چیک کریں';
+    audioPlaying=false;
+    document.getElementById('audio-play-btn').textContent='▶';
+    document.getElementById('audio-play-btn').classList.remove('active');
+    document.getElementById('mini-play-btn').textContent='▶';
+    document.getElementById('mini-play-btn').classList.remove('active');
+  });
+}
+
+// ═══════════════════════════════════════
+// DOWNLOAD MANAGER
+let dlRunning=false,dlAbort=false;
+
+function populateDlSelects(){
+  const from=document.getElementById('dl-surah-from');
+  const to=document.getElementById('dl-surah-to');
+  if(!from||from.options.length>1)return;
+  APK.forEach((s,i)=>{
+    const opt=`<option value="${i}">${s.n}. ${SN[i]}</option>`;
+    from.innerHTML+=opt; to.innerHTML+=opt;
+  });
+  to.value=String(APK.length-1);
+}
+
+async function downloadCurrentSurah(){
+  if(!audioSurah){toast('پہلے سورۃ منتخب کریں');return;}
+  const si=audioSurah-1;
+  document.getElementById('dl-surah-from').value=si;
+  document.getElementById('dl-surah-to').value=si;
+  await startDownload();
+}
+
+async function startDownload(){
+  if(dlRunning){dlAbort=true;setTimeout(()=>{dlAbort=false;},500);return;}
+  const fromSel=document.getElementById('dl-surah-from');
+  const toSel=document.getElementById('dl-surah-to');
+  const fromI=parseInt(fromSel.value);
+  const toI=parseInt(toSel.value);
+  if(isNaN(fromI)||isNaN(toI)){toast('سورۃ منتخب کریں');return;}
+
+  // Build list of all ayahs to download
+  const jobs=[];
+  for(let si=Math.min(fromI,toI);si<=Math.max(fromI,toI);si++){
+    const s=APK[si];
+    for(let a=1;a<=s.ta;a++) jobs.push({surah:s.n,ayah:a});
+  }
+
+  const total=jobs.length;
+  dlRunning=true;dlAbort=false;
+  const progWrap=document.getElementById('dl-prog-wrap');
+  const progBar=document.getElementById('dl-prog-bar');
+  const status=document.getElementById('dl-status');
+  progWrap.style.display='block';
+  document.querySelector('[onclick="startDownload()"]').textContent='⏹ روکیں';
+
+  let done=0,skipped=0,failed=0;
+  for(const {surah,ayah} of jobs){
+    if(dlAbort)break;
+    // check if already cached
+    const already=await getFromCache(surah,ayah,audioReciter);
+    if(already){skipped++;done++;progBar.style.width=(done/total*100)+'%';continue;}
+    try{
+      const resp=await fetch(audioUrl(surah,ayah));
+      if(!resp.ok)throw new Error();
+      const blob=await resp.blob();
+      await saveToCache(surah,ayah,audioReciter,blob);
+      done++;
+    }catch(e){failed++;done++;}
+    progBar.style.width=(done/total*100)+'%';
+    status.textContent=`${done}/${total} — سورۃ ${surah} آیت ${ayah}${failed?' | ⚠ '+failed+' ناکام':''}`;
+  }
+
+  dlRunning=false;
+  document.querySelector('[onclick="startDownload()"]').textContent='⬇ ڈاؤنلوڈ کریں';
+  if(dlAbort){status.textContent='⏹ روک دیا گیا';dlAbort=false;}
+  else{status.textContent=`✓ مکمل — ${done-skipped} ڈاؤنلوڈ، ${skipped} پہلے سے موجود`;}
+  updCacheInfo();
+}
+
+async function clearAudioCache(){
+  if(!confirm('تمام ڈاؤنلوڈ شدہ آڈیو حذف کریں؟'))return;
+  await clearAllCache();
+  document.getElementById('dl-status').textContent='🗑 کیش خالی ہوگیا';
+  updCacheInfo();
+}
+
+async function updCacheInfo(){
+  const n=await getCacheSize();
+  const el=document.getElementById('dl-cached-info');
+  if(el) el.textContent=n>0?`📥 ${n} آیتیں محفوظ ہیں (آف لائن دستیاب)`:'';
+}
+
+// ═══════════════════════════════════════
+// LOAD LOCAL AUDIO FILES
+// Supports formats:
+//   001001.mp3          (surah 1, ayah 1)
+//   1_1.mp3             (surah 1, ayah 1)
+//   surah1_ayah1.mp3
+//   Al-Fatiha_1.mp3     (any prefix + ayah number)
+async function parseAudioFilename(name){
+  // remove extension
+  const base=name.replace(/\.[^.]+$/,'');
+  // Format 1: 001001 or 002286 (6 digits)
+  let m=base.match(/^(\d{3})(\d{3})$/);
+  if(m) return {surah:parseInt(m[1]),ayah:parseInt(m[2])};
+  // Format 2: 1_1 or 002_286
+  m=base.match(/^(\d+)[_\-](\d+)$/);
+  if(m) return {surah:parseInt(m[1]),ayah:parseInt(m[2])};
+  // Format 3: surah1_ayah1 or surah_1_1
+  m=base.match(/(\d+)[_\-](\d+)/);
+  if(m) return {surah:parseInt(m[1]),ayah:parseInt(m[2])};
+  return null;
+}
+
+async function loadLocalAudio(input){
+  const files=Array.from(input.files);
+  if(!files.length)return;
+  const status=document.getElementById('local-status');
+  const progWrap=document.getElementById('local-prog-wrap');
+  const progBar=document.getElementById('local-prog-bar');
+  progWrap.style.display='block';
+  progBar.style.width='0%';
+  status.textContent=`⏳ ${files.length} فائلیں پڑھ رہے ہیں...`;
+
+  let saved=0,skipped=0,unknown=0;
+  for(let i=0;i<files.length;i++){
+    const file=files[i];
+    const parsed=await parseAudioFilename(file.name);
+    if(!parsed||parsed.surah<1||parsed.surah>114||parsed.ayah<1){
+      unknown++;
+    } else {
+      const blob=file.slice(0,file.size,file.type||'audio/mpeg');
+      const ok=await saveToCache(parsed.surah,parsed.ayah,audioReciter,blob);
+      if(ok)saved++;else skipped++;
+    }
+    progBar.style.width=((i+1)/files.length*100)+'%';
+    if(i%20===0||i===files.length-1){
+      status.textContent=`⏳ ${i+1}/${files.length} — محفوظ: ${saved}${unknown?' | ناقابلِ شناخت: '+unknown:''}`;
+    }
+  }
+
+  status.textContent=`✓ مکمل — ${saved} محفوظ${unknown?' | '+unknown+' ناقابلِ شناخت':''}${skipped?' | '+skipped+' ناکام':''}`;
+  if(unknown>0){
+    status.textContent+='\n\n💡 فائل نام مثال: 001001.mp3 یا 2_5.mp3';
+  }
+  updCacheInfo();
+  // reset input so same files can be re-selected if needed
+  input.value='';
+}
+
+// init download selects on DOMContentLoaded
+document.addEventListener('DOMContentLoaded',()=>{
+  populateDlSelects();
+  updCacheInfo();
+});
+
+function audioNext(){
+  const totalAyahs=APK[audioSurah-1]?.ta||286;
+  if(audioAyah<totalAyahs){loadAndPlay(audioSurah,audioAyah+1);}
+  else if(audioSurah<114){loadAndPlay(audioSurah+1,1);}
+  else{stopAudioCompletely();toast('قرآن کریم مکمل ✓');}
+}
+
+function audioPrev(){
+  if(audioAyah>1){loadAndPlay(audioSurah,audioAyah-1);}
+  else if(audioSurah>1){loadAndPlay(audioSurah-1,APK[audioSurah-2].ta);}
+}
+
+function audioJump(delta){
+  let a=audioAyah+delta;
+  const total=APK[audioSurah-1]?.ta||286;
+  if(a<1)a=1;if(a>total)a=total;
+  loadAndPlay(audioSurah,a);
+}
+
+function stopAudioCompletely(){
+  const el=document.getElementById('audio-el');
+  el.pause();el.src='';audioPlaying=false;
+  document.getElementById('audio-play-btn').textContent='▶';
+  document.getElementById('audio-play-btn').classList.remove('active');
+  document.getElementById('mini-play-btn').textContent='▶';
+  document.getElementById('mini-play-btn').classList.remove('active');
+  document.getElementById('mini-loading').textContent='';
+  document.getElementById('audio-loading').textContent='';
+}
+
+function seekAudio(e){
+  const el=document.getElementById('audio-el');
+  if(!el.duration)return;
+  const rect=e.currentTarget.getBoundingClientRect();
+  const pct=(e.clientX-rect.left)/rect.width;
+  el.currentTime=pct*el.duration;
+}
+
+// audio event listeners
+document.addEventListener('DOMContentLoaded',()=>{
+  const el=document.getElementById('audio-el');
+  if(!el)return;
+  el.addEventListener('ended',()=>audioNext());
+  el.addEventListener('timeupdate',()=>{
+    if(el.duration){
+      const pct=el.currentTime/el.duration*100;
+      document.getElementById('audio-prog').style.width=pct+'%';
+      document.getElementById('mini-prog').style.width=pct+'%';
+    }
+  });
+  el.addEventListener('error',()=>{
+    document.getElementById('audio-loading').textContent='⚠ آڈیو نہیں ملی';
+    document.getElementById('mini-loading').textContent='⚠ آڈیو نہیں ملی';
+    audioPlaying=false;
+    document.getElementById('audio-play-btn').textContent='▶';
+    document.getElementById('audio-play-btn').classList.remove('active');
+    document.getElementById('mini-play-btn').textContent='▶';
+    document.getElementById('mini-play-btn').classList.remove('active');
+  });
+  document.getElementById('audio-auto-tgl').addEventListener('change',e=>{
+    audioAutoPlay=e.target.checked;
+    toast(audioAutoPlay?'🔊 خودبخود تلاوت آن':'خودبخود تلاوت آف');
+  });
+});
+
+function triggerAutoAudio(pg){
+  if(!audioAutoPlay||!PDF)return;
+  const {surahNum,ayah}=getPageSurahAyah(pg);
+  loadAndPlay(surahNum,ayah);
+}
+
+// ═══════════════════════════════════════
+// PWA — MANIFEST + SERVICE WORKER + INSTALL
+let deferredPrompt=null;
+
+// ── 1. Inject Manifest via data URI (works in Chrome Android) ──
+(function setupManifest(){
+  const icon='data:image/svg+xml,'+encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230a2d1a'/><text y='.9em' font-size='80' x='10'>📖</text></svg>`);
+  const manifest={
+    name:'القرآن الکریم',
+    short_name:'القرآن',
+    description:'قرآن کریم مطالعہ ایپ',
+    start_url:location.href,
+    scope:location.href,
+    display:'standalone',
+    orientation:'portrait',
+    background_color:'#0a2d1a',
+    theme_color:'#1b6b45',
+    lang:'ur',
+    dir:'rtl',
+    icons:[
+      {src:icon,sizes:'192x192',type:'image/svg+xml',purpose:'any maskable'},
+      {src:icon,sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'}
+    ]
+  };
+  try{
+    const str=JSON.stringify(manifest);
+    const b64=btoa(unescape(encodeURIComponent(str)));
+    document.getElementById('pwa-manifest-link').href='data:application/manifest+json;base64,'+b64;
+  }catch(e){
+    try{
+      const blob=new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'});
+      document.getElementById('pwa-manifest-link').href=URL.createObjectURL(blob);
+    }catch(e2){}
+  }
+})();
+
+// ── 2. Register Inline Service Worker (required for PWA eligibility) ──
+(function setupSW(){
+  if(!('serviceWorker' in navigator))return;
+  const swCode=`
+const CACHE='tquran-v1';
+const ASSETS=['${location.href}'];
+self.addEventListener('install',e=>{
+  e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).catch(()=>{}));
+  self.skipWaiting();
+});
+self.addEventListener('activate',e=>{
+  e.waitUntil(clients.claim());
+});
+self.addEventListener('fetch',e=>{
+  if(e.request.method!=='GET')return;
+  e.respondWith(
+    caches.match(e.request).then(cached=>{
+      const net=fetch(e.request).then(res=>{
+        if(res&&res.status===200&&res.type==='basic'){
+          const clone=res.clone();
+          caches.open(CACHE).then(c=>c.put(e.request,clone));
+        }
+        return res;
+      }).catch(()=>cached);
+      return cached||net;
+    })
+  );
+});
+`;
+  try{
+    const blob=new Blob([swCode],{type:'application/javascript'});
+    const swUrl=URL.createObjectURL(blob);
+    navigator.serviceWorker.register(swUrl,{scope:'./'})
+      .then(reg=>{
+        console.log('SW registered',reg.scope);
+        // check if already installed as PWA
+        if(window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone){
+          pwaMarkInstalled();
+        }
+      })
+      .catch(err=>console.log('SW failed:',err));
+  }catch(e){console.log('SW blob error',e);}
+})();
+
+// ── 3. Capture beforeinstallprompt ──
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();
+  deferredPrompt=e;
+  showPwaInstallBtn('🟢 اینڈرائیڈ انسٹال تیار ہے!');
+});
+
+window.addEventListener('appinstalled',()=>{
+  deferredPrompt=null;
+  pwaMarkInstalled();
+  toast('📱 ایپ ہوم اسکرین پر شامل ہوگئی!');
+});
+
+// ── 4. iOS / iPadOS detection ──
+(function detectIOS(){
+  const ua=navigator.userAgent;
+  const isIOS=/iphone|ipad|ipod/i.test(ua);
+  const isMac=navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1;
+  const isStandalone=window.navigator.standalone===true;
+  if((isIOS||isMac)&&!isStandalone){
+    document.getElementById('pwa-ios-hint').style.display='block';
+    document.getElementById('pwa-status').textContent='Safari سے کھولیں اور ہوم اسکرین پر شامل کریں';
+  }
+})();
+
+// ── 5. Android Chrome — show fallback manual instructions if prompt delayed ──
+setTimeout(()=>{
+  if(!deferredPrompt&&!window.matchMedia('(display-mode:standalone)').matches){
+    const isAndroid=/android/i.test(navigator.userAgent);
+    if(isAndroid){
+      document.getElementById('pwa-android-manual').style.display='block';
+      document.getElementById('pwa-status').textContent='براؤزر مینو سے بھی انسٹال ہوسکتی ہے';
+    }
+  }
+},3000);
+
+function showPwaInstallBtn(msg){
+  document.getElementById('pwa-install-btn').style.display='flex';
+  document.getElementById('pwa-ios-hint').style.display='none';
+  document.getElementById('pwa-android-manual').style.display='none';
+  document.getElementById('pwa-status').textContent=msg||'';
+}
+
+function pwaMarkInstalled(){
+  document.getElementById('pwa-install-btn').style.display='none';
+  document.getElementById('pwa-android-manual').style.display='none';
+  document.getElementById('pwa-ios-hint').style.display='none';
+  document.getElementById('pwa-status').textContent='✅ ایپ پہلے سے انسٹال ہے';
+}
+
+async function pwaInstall(){
+  if(deferredPrompt){
+    try{
+      deferredPrompt.prompt();
+      const res=await deferredPrompt.userChoice;
+      if(res.outcome==='accepted'){
+        toast('📱 انسٹال شروع ہوگئی');
+        deferredPrompt=null;
+      } else {
+        toast('انسٹال منسوخ کی گئی');
+      }
+    }catch(e){
+      toast('⚠ انسٹال نہیں ہوسکی');
+    }
+  } else {
+    // fallback: show manual guide
+    document.getElementById('pwa-android-manual').style.display='block';
+    toast('براہ کرم نیچے ہدایات دیکھیں');
+  }
+}
+
+// ═══════════════════════════════════════
+// SCROLL & ZOOM MEMORY PER PAGE
+let pageScrollMem={};
+function saveScrollMem(pg){
+  const pa=document.getElementById('pa');
+  pageScrollMem[pg]={scroll:pa.scrollTop,zoom};
+  try{
+    const stored=JSON.parse(localStorage.getItem('tqscroll')||'{}');
+    stored[pg]={scroll:pa.scrollTop,zoom};
+    // keep only last 50 pages
+    const keys=Object.keys(stored);
+    if(keys.length>50){delete stored[keys[0]];}
+    localStorage.setItem('tqscroll',JSON.stringify(stored));
+  }catch(e){}
+}
+function restoreScrollMem(pg){
+  try{
+    if(!pageScrollMem[pg]){
+      const stored=JSON.parse(localStorage.getItem('tqscroll')||'{}');
+      if(stored[pg])pageScrollMem[pg]=stored[pg];
+    }
+    const mem=pageScrollMem[pg];
+    if(mem){
+      if(mem.zoom&&mem.zoom!==zoom){zoom=mem.zoom;}
+      setTimeout(()=>{
+        document.getElementById('pa').scrollTop=mem.scroll||0;
+      },120);
+      return true;
+    }
+  }catch(e){}
+  setTimeout(()=>{document.getElementById('pa').scrollTop=0;},120);
+  return false;
+}
+function ldScrollMem(){
+  try{pageScrollMem=JSON.parse(localStorage.getItem('tqscroll')||'{}');}catch(e){pageScrollMem={};}
+}
+
+// ═══════════════════════════════════════
+// WHATSAPP SHARE PROGRESS
+function shareWhatsApp(){
+  const today=todayStr();
+  const log=JSON.parse(localStorage.getItem('tqlog')||'{}');
+  const td=log[today]||{p:[],m:0};
+  const streak=calcStreak();
+  const total=Object.values(log).reduce((s,d)=>s+((d.p||[]).length),0);
+  const goal=parseInt(localStorage.getItem('tqgoal')||10);
+  const todayPgs=(td.p||[]).length;
+  const pct=Math.min(100,Math.round(todayPgs/goal*100));
+  // build progress bar emoji
+  const filled=Math.round(pct/10);
+  const bar='🟩'.repeat(filled)+'⬜'.repeat(10-filled);
+  let sname='';
+  if(PDF){for(let i=APK.length-1;i>=0;i--){if(sPg(i)<=curPg){sname=SU[i];break;}}}
+  const msg=
+`📖 *القرآن الکریم — روزانہ پیشرفت*
+
+📅 تاریخ: ${today}
+🔥 سلسلہ: ${streak} دن
+📄 آج کے صفحات: ${todayPgs} / ${goal}
+📊 ہدف: ${bar} ${pct}%
+📚 کل صفحات: ${total}
+${sname?`🕌 موجودہ مقام: ${sname} — ص ${curPg}`:''}
+
+قرآن کریم روزانہ پڑھیں! 🤲`;
+  const url=`https://wa.me/?text=${encodeURIComponent(msg)}`;
+  window.open(url,'_blank');
+}
+
+// ═══════════════════════════════════════
+// SCHEDULED READING MODE
+let schedDays=[1,2,3,4,5]; // Mon–Fri default
+let schedTimer=null;
+
+function toggleSchedDay(el){
+  el.classList.toggle('on');
+  schedDays=Array.from(document.querySelectorAll('.sched-day.on')).map(e=>parseInt(e.dataset.d));
+}
+
+function saveSchedule(){
+  const t=document.getElementById('sched-time').value;
+  if(!t){toast('وقت درج کریں');return;}
+  localStorage.setItem('tqsched',JSON.stringify({time:t,days:schedDays}));
+  document.getElementById('sched-status').textContent=`✅ مقررہ وقت ${t} — فعال`;
+  startScheduleChecker();
+  toast(`🌙 مطالعہ موڈ ${t} پر مقرر`);
+  // also request notification permission
+  if('Notification' in window&&Notification.permission==='default'){
+    Notification.requestPermission();
+  }
+}
+
+function startScheduleChecker(){
+  if(schedTimer)clearInterval(schedTimer);
+  schedTimer=setInterval(()=>{
+    try{
+      const cfg=JSON.parse(localStorage.getItem('tqsched')||'{}');
+      if(!cfg.time)return;
+      const now=new Date();
+      const [h,m]=cfg.time.split(':').map(Number);
+      const days=cfg.days||[1,2,3,4,5];
+      if(now.getHours()===h&&now.getMinutes()===m&&days.includes(now.getDay())){
+        const autoOn=document.getElementById('sched-auto-tgl')?.checked;
+        if(autoOn){
+          // activate wake lock
+          if(!wlEnabled){document.getElementById('wl-tgl').checked=true;toggleWakeLock(true);}
+          // go to last saved page
+          if(PDF){const lp=parseInt(localStorage.getItem('tqlp'))||1;goP(lp);}
+          toast('🌙 مقررہ مطالعہ شروع ہوگیا');
+        }
+        if('Notification' in window&&Notification.permission==='granted'){
+          new Notification('📖 القرآن الکریم',{body:`قرآن پڑھنے کا مقررہ وقت آگیا — ${cfg.time}`,icon:''});
+        }
+      }
+    }catch(e){}
+  },60000);
+}
+
+function ldSchedule(){
+  try{
+    const cfg=JSON.parse(localStorage.getItem('tqsched')||'{}');
+    if(cfg.time){
+      document.getElementById('sched-time').value=cfg.time;
+      schedDays=cfg.days||[1,2,3,4,5];
+      document.querySelectorAll('.sched-day').forEach(el=>{
+        el.classList.toggle('on',schedDays.includes(parseInt(el.dataset.d)));
+      });
+      document.getElementById('sched-status').textContent=`✅ مقررہ وقت ${cfg.time} — فعال`;
+      startScheduleChecker();
+    }
+  }catch(e){}
+}
+
+// ═══════════════════════════════════════
+// INIT
+async function init(){
+  if(localStorage.getItem('tqdk')==='1')togDk();
+  if(localStorage.getItem('tqsp')==='1')togSepia();
+  const th=localStorage.getItem('tqtheme')||'';setTheme(th,true);
+  ldFS();
+  const br=parseInt(localStorage.getItem('tqbright')||0);
+  if(br>0){document.getElementById('bright-sl').value=br;setBright(br,true);}
+  if(localStorage.getItem('tqkids')==='1'){togKids(true,true);}
+  // Wake Lock restore
+  if(localStorage.getItem('tqwl')==='1'){
+    const wlChk=document.getElementById('wl-tgl');
+    if(wlChk)wlChk.checked=true;
+    toggleWakeLock(true);
+  }
+  // Progress bar restore
+  const progSaved=localStorage.getItem('tqprog');
+  if(progSaved==='0'){
+    progBarOn=false;
+    const pc=document.getElementById('prog-tgl');
+    if(pc)pc.checked=false;
+  }
+  rlists();updPill();ldStats();ldScrollMem();ldSchedule();
+  // PWA: if already running as standalone app
+  if(window.matchMedia('(display-mode:standalone)').matches||window.navigator.standalone){
+    pwaMarkInstalled();
+  }
+  // PIN check
+  const pin=localStorage.getItem('tqpin');
+  if(pin){
+    document.getElementById('pin-screen').classList.add('on');
+    document.getElementById('pin-tgl').checked=true;
+  }
+  // Reminder check
+  const remT=localStorage.getItem('tqrem');
+  if(remT)document.getElementById('rem-lbl').textContent=`یاددہانی: ${remT} بجے فعال ہے`;
+  try{
+    await openIDB();
+    const rec=await idbGet();
+    if(rec){
+      const name=localStorage.getItem('tqname')||rec.name||'PDF';
+      document.getElementById('cbn').style.display='block';
+      document.getElementById('cbnname').textContent=`"${name}" دوبارہ کھولیں — کلک کریں`;
+      showLdg('محفوظ PDF لوڈ ہو رہی ہے...');
+      await initPDF(rec.buf,name,false);
+    }
+  }catch(e){showUp();}
+  // Start read-time tracker
+  setInterval(()=>{
+    if(PDF&&!document.hidden){
+      readMins++;
+      const today=todayStr();
+      const log=JSON.parse(localStorage.getItem('tqlog')||'{}');
+      if(!log[today])log[today]={p:new Set(),m:0};
+      log[today].m=(log[today].m||0)+1;
+      // convert to plain for storage
+      const sLog=JSON.parse(localStorage.getItem('tqlog')||'{}');
+      sLog[today]={p:Array.from(readPages),m:log[today].m};
+      localStorage.setItem('tqlog',JSON.stringify(sLog));
+    }
+  },60000);
+}
+
+// fix swMT
+function swMT(t,el){
+  document.getElementById('mts').classList.remove('on');
+  document.getElementById('mtp').classList.remove('on');
+  document.getElementById('mtps').classList.remove('on');
+  document.getElementById('mtpp').classList.remove('on');
+  if(t==='s'){document.getElementById('mts').classList.add('on');document.getElementById('mtps').classList.add('on');}
+  else{document.getElementById('mtp').classList.add('on');document.getElementById('mtpp').classList.add('on');}
+}
+
+// ═══════════════════════════════════════
+// FULLSCREEN
+let fsMode=false;
+function togFS(){
+  fsMode=!fsMode;
+  document.body.classList.toggle('fs',fsMode);
+  const tgl=document.getElementById('fs-tgl');
+  if(tgl)tgl.checked=fsMode;
+  document.getElementById('fsbtn').style.background=fsMode?'rgba(224,168,0,.4)':'';
+  if(fsMode)toast('فل اسکرین — ڈبل ٹیپ یا ابزار سے بند کریں');
+}
+// Double tap to exit fullscreen
+let _lastTap=0;
+document.getElementById('pa').addEventListener('touchend',e=>{
+  const now=Date.now();
+  if(now-_lastTap<350&&fsMode)togFS();
+  _lastTap=now;
+},{passive:true});
+
+// ═══════════════════════════════════════
+// BRIGHTNESS
+function setBright(v,silent){
+  const pct=Math.round(v);
+  document.getElementById('bright-ov').style.opacity=pct/100;
+  document.getElementById('bright-lbl').textContent=pct+'%';
+  if(!silent)localStorage.setItem('tqbright',pct);
+}
+
+// ═══════════════════════════════════════
+// KIDS MODE
+function togKids(on,silent){
+  document.body.classList.toggle('kids',on);
+  if(!silent){
+    localStorage.setItem('tqkids',on?'1':'0');
+    toast(on?'🧒 بچوں کا موڈ آن':'عام موڈ');
+  }
+}
+
+// ═══════════════════════════════════════
+// THEMES
+function setTheme(name,silent){
+  document.documentElement.setAttribute('data-theme',name||'');
+  // update swatches
+  ['green','blue','purple','maroon','teal'].forEach(t=>{
+    const th=t==='green'?'':t;
+    document.getElementById('th-'+t)?.classList.toggle('on',name===th);
+  });
+  if(!silent){localStorage.setItem('tqtheme',name||'');toast('🎨 تھیم بدلی');}
+}
+
+// ═══════════════════════════════════════
+// AUTO SCROLL
+let asRunning=false,asTimer=null;
+document.getElementById('as-speed').addEventListener('input',e=>{
+  document.getElementById('as-lbl').textContent=e.target.value;
+});
+function toggleAS(){
+  asRunning=!asRunning;
+  const btn=document.getElementById('as-btn');
+  if(asRunning){
+    btn.textContent='روکیں';btn.style.background='#c00';
+    toast('آٹو اسکرول شروع');
+    asTimer=setInterval(()=>{
+      const pa=document.getElementById('pa');
+      const spd=parseInt(document.getElementById('as-speed').value);
+      pa.scrollTop+=spd;
+      // if at bottom, go to next page
+      if(pa.scrollTop+pa.clientHeight>=pa.scrollHeight-5){
+        pa.scrollTop=0;
+        if(curPg<totPg)chPg(1);
+        else{toggleAS();toast('تلاوت مکمل ✓');}
+      }
+    },50);
+  } else {
+    clearInterval(asTimer);asTimer=null;
+    btn.textContent='شروع';btn.style.background='';
+    toast('آٹو اسکرول رک گئی');
+  }
+}
+
+// ═══════════════════════════════════════
+// SLEEP TIMER
+let stTimer=null,stEnd=0;
+function setST(mins){
+  if(stTimer)clearTimeout(stTimer);
+  document.querySelectorAll('.st-btn').forEach(b=>b.classList.remove('on'));
+  if(mins===0){document.getElementById('st-lbl').textContent='سلیپ ٹائمر بند ہے';stEnd=0;return;}
+  stEnd=Date.now()+mins*60000;
+  const btn=event.target;btn.classList.add('on');
+  document.getElementById('st-lbl').textContent=`⏳ ${mins} منٹ بعد بند ہوگا`;
+  stTimer=setTimeout(()=>{
+    if(asRunning)toggleAS();
+    document.getElementById('st-lbl').textContent='⏰ وقت ختم! ایپ بند ہوگئی';
+    toast('😴 سلیپ ٹائمر — ایپ بند');
+    document.getElementById('cw').style.display='none';
+    document.getElementById('upz').style.display='flex';
+  },mins*60000);
+  toast(`😴 ${mins} منٹ میں بند ہوگا`);
+}
+
+// ═══════════════════════════════════════
+// SHARE
+async function sharePg(){
+  if(!PDF){toast('پہلے PDF لوڈ کریں');return;}
+  let sname='';
+  for(let i=APK.length-1;i>=0;i--){if(sPg(i)<=curPg){sname=SU[i];break;}}
+  const text=`القرآن الکریم\nصفحہ ${curPg} — ${sname}\nالقرآن الکریم`;
+  if(navigator.share){
+    try{await navigator.share({title:'القرآن الکریم',text});toast('شیئر ہوگیا ✓');}
+    catch(e){}
+  } else {
+    navigator.clipboard.writeText(text).then(()=>toast('کلپ بورڈ میں کاپی ہوگیا'));
+  }
+}
+
+// ═══════════════════════════════════════
+// EXPORT NOTES
+function exportNotes(){
+  if(!Object.keys(notes).length){toast('کوئی نوٹ نہیں');return;}
+  let txt='القرآن الکریم — میرے نوٹس\n'+'═'.repeat(30)+'\n\n';
+  Object.keys(notes).sort((a,b)=>a-b).forEach(pg=>{
+    let sname='';
+    for(let i=APK.length-1;i>=0;i--){if(sPg(i)<=parseInt(pg)){sname=SU[i];break;}}
+    txt+=`صفحہ ${pg}${sname?' — '+sname:''}\n${notes[pg]}\n\n`;
+  });
+  const a=document.createElement('a');
+  a.href='data:text/plain;charset=utf-8,'+encodeURIComponent(txt);
+  a.download='quran-notes.txt';a.click();
+  toast('نوٹس ڈاؤنلوڈ ہورہے ہیں');
+}
+
+// ═══════════════════════════════════════
+// PIN LOCK
+let pinBuf='';
+function pinKey(v){
+  if(v==='del'){pinBuf=pinBuf.slice(0,-1);}
+  else if(v==='ok'){
+    const stored=localStorage.getItem('tqpin');
+    if(pinBuf===stored){
+      document.getElementById('pin-screen').classList.remove('on');
+      document.getElementById('pin-err').textContent='';
+      pinBuf='';updPinDots();
+    } else {
+      document.getElementById('pin-err').textContent='❌ غلط پن — دوبارہ کوشش کریں';
+      pinBuf='';updPinDots();
+    }
+    return;
+  } else {
+    if(pinBuf.length>=4)return;
+    pinBuf+=v;
+  }
+  updPinDots();
+  // auto-submit when 4 digits entered
+  if(pinBuf.length===4){setTimeout(()=>pinKey('ok'),120);}
+}
+function updPinDots(){
+  for(let i=0;i<4;i++){
+    document.getElementById('pd'+i)?.classList.toggle('fill',i<pinBuf.length);
+  }
+}
+function togglePinSetup(on){
+  document.getElementById('pin-setup-area').style.display=on?'block':'none';
+  if(!on){localStorage.removeItem('tqpin');toast('پن لاک ہٹادیا');}
+}
+function savePin(){
+  const v=document.getElementById('new-pin').value.trim();
+  if(v.length!==4||isNaN(v)){toast('4 ہندسہ درکار ہے');return;}
+  localStorage.setItem('tqpin',v);
+  document.getElementById('new-pin').value='';
+  toast('🔒 پن محفوظ ہوگیا');
+}
+function pinReset(){
+  if(confirm('پن ہٹائیں؟')){
+    localStorage.removeItem('tqpin');
+    document.getElementById('pin-screen').classList.remove('on');
+    toast('پن ہٹادیا');
+  }
+}
+
+// ═══════════════════════════════════════
+// READING STATS
+let readMins=0,readPages=new Set();
+function todayStr(){return new Date().toISOString().slice(0,10);}
+function ldStats(){
+  try{
+    const today=todayStr();
+    const log=JSON.parse(localStorage.getItem('tqlog')||'{}');
+    const td=log[today]||{};
+    readMins=td.m||0;
+    readPages=new Set(td.p||[]);
+  }catch(e){}
+}
+function calcStreak(){
+  try{
+    const log=JSON.parse(localStorage.getItem('tqlog')||'{}');
+    let streak=0,d=new Date();
+    for(let i=0;i<365;i++){
+      const s=d.toISOString().slice(0,10);
+      if(log[s]&&(log[s].m>0||(log[s].p&&log[s].p.length>0))){streak++;}
+      else if(i>0)break;
+      d.setDate(d.getDate()-1);
+    }
+    return streak;
+  }catch(e){return 0;}
+}
+function openStats(){
+  const today=todayStr();
+  const log=JSON.parse(localStorage.getItem('tqlog')||'{}');
+  const td=log[today]||{p:[],m:0};
+  // update display
+  document.getElementById('stat-streak').textContent=calcStreak()+' 🔥';
+  document.getElementById('stat-time').textContent=td.m||0;
+  document.getElementById('stat-pages').textContent=(td.p||[]).length;
+  const total=Object.values(log).reduce((s,d)=>s+((d.p||[]).length),0);
+  document.getElementById('stat-total').textContent=total;
+  // goal
+  const goal=parseInt(localStorage.getItem('tqgoal')||10);
+  document.getElementById('goal-inp').value=goal;
+  const done=(td.p||[]).length;
+  const pct=Math.min(100,Math.round(done/goal*100));
+  document.getElementById('goal-bar').style.width=pct+'%';
+  document.getElementById('goal-pct').textContent=`${done} / ${goal} صفحات (${pct}%)`;
+  // week log
+  const wl=document.getElementById('week-log');
+  wl.innerHTML='';
+  const days=['اتوار','پیر','منگل','بدھ','جمعرات','جمعہ','ہفتہ'];
+  for(let i=6;i>=0;i--){
+    const d=new Date();d.setDate(d.getDate()-i);
+    const ds=d.toISOString().slice(0,10);
+    const pg=(log[ds]?.p||[]).length;
+    const isToday=i===0;
+    const col=pg>=goal?'var(--au2)':pg>0?'var(--g3)':'rgba(255,255,255,.08)';
+    wl.innerHTML+=`<div style="text-align:center;background:${col};border-radius:8px;padding:6px 2px;
+      border:1.5px solid ${isToday?'var(--au2)':'transparent'}">
+      <div style="font-size:.9rem;font-weight:700;color:${pg>0?'#fff':'var(--dim)'}">${pg}</div>
+      <div style="font-size:.56rem;color:rgba(255,255,255,.5);margin-top:2px">${days[d.getDay()]}</div>
+    </div>`;
+  }
+  document.getElementById('stats-modal').classList.add('on');
+}
+function closeStats(){document.getElementById('stats-modal').classList.remove('on');}
+function saveGoal(){
+  const v=parseInt(document.getElementById('goal-inp').value)||10;
+  localStorage.setItem('tqgoal',v);toast('🎯 ہدف محفوظ: '+v+' صفحات');
+}
+function resetStats(){
+  if(!confirm('تمام اعداد صفر کریں؟'))return;
+  localStorage.removeItem('tqlog');readMins=0;readPages=new Set();
+  toast('اعداد صفر ہوگئے');closeStats();setTimeout(openStats,200);
+}
+
+// Track read pages in stats - integrated into goP above
+
+// ═══════════════════════════════════════
+// REMINDER (Notification API)
+function setReminder(){
+  const t=document.getElementById('rem-time').value;
+  if(!t)return;
+  if('Notification' in window){
+    Notification.requestPermission().then(p=>{
+      if(p==='granted'){
+        localStorage.setItem('tqrem',t);
+        document.getElementById('rem-lbl').textContent=`✓ یاددہانی ${t} بجے فعال`;
+        toast(`🔔 یاددہانی ${t} بجے لگادی`);
+        scheduleReminder(t);
+      } else {
+        toast('اجازت نہیں ملی');
+      }
+    });
+  } else {
+    localStorage.setItem('tqrem',t);
+    toast(`یاددہانی محفوظ: ${t}`);
+  }
+}
+function scheduleReminder(t){
+  const [h,m]=t.split(':').map(Number);
+  const now=new Date();
+  const next=new Date(now.getFullYear(),now.getMonth(),now.getDate(),h,m,0);
+  if(next<=now)next.setDate(next.getDate()+1);
+  const ms=next-now;
+  setTimeout(()=>{
+    if(Notification.permission==='granted'){
+      new Notification('📖 القرآن الکریم',{body:'قرآن پڑھنے کا وقت آگیا!',icon:''});
+    }
+    scheduleReminder(t); // repeat daily
+  },ms);
+}
+
+init();
+</script>
+</body>
+</html>
+
