@@ -11,6 +11,7 @@
 <link rel="manifest" id="pwa-manifest-link">
 <title> القرآن الکریم </title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -383,12 +384,61 @@ body{font-family:var(--fur);background:var(--bg);color:var(--txt);display:flex;f
                box-shadow:0 2px 12px rgba(224,168,0,.4)}
 .mini-btn.play.active{background:linear-gradient(135deg,#a00,#d03);color:#fff;
                       box-shadow:0 2px 12px rgba(200,0,0,.4)}
-.mini-reciter{flex-shrink:0;padding:4px 7px;background:rgba(255,255,255,.08);
+.mini-speed-wrap{display:flex;align-items:center;gap:3px;flex-shrink:0;
+                 background:rgba(255,255,255,.07);border-radius:20px;padding:3px 6px;
+                 border:1px solid rgba(255,255,255,.12)}
+.mini-speed-btn{background:none;border:none;color:#fff;font-size:.85rem;
+                cursor:pointer;padding:0 2px;line-height:1;transition:transform .1s}
+.mini-speed-btn:active{transform:scale(.8)}
+.mini-speed-lbl{color:var(--au2);font-size:.72rem;font-weight:700;
+                min-width:26px;text-align:center;font-family:monospace}
               border:1px solid rgba(255,255,255,.15);color:#fff;border-radius:7px;
               font-family:var(--fur);font-size:.62rem;outline:none;cursor:pointer;max-width:115px}
 .mini-reciter option{background:#0a2d1a}
 
-/* ── AUDIO DOWNLOAD ── */
+/* ── EXIT DIALOG ── */
+.exit-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);
+  z-index:2000;align-items:center;justify-content:center;
+  backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.exit-overlay.on{display:flex}
+.exit-box{background:linear-gradient(160deg,#071e11 0%,#0d3320 60%,#1a5c3a 100%);
+  border:2px solid var(--au2);border-radius:18px;padding:28px 24px 22px;
+  max-width:320px;width:90%;text-align:center;
+  box-shadow:0 8px 40px rgba(0,0,0,.7);animation:exitPop .2s ease}
+@keyframes exitPop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+.exit-icon{font-size:2.4rem;margin-bottom:10px}
+.exit-title{font-size:1.1rem;font-weight:700;color:var(--au2);
+  margin-bottom:8px;font-family:var(--fur)}
+.exit-msg{font-size:.82rem;color:rgba(255,255,255,.65);
+  line-height:1.7;margin-bottom:20px;font-family:var(--fur)}
+.exit-btns{display:flex;gap:10px;justify-content:center}
+.exit-btn{flex:1;padding:10px 0;border:none;border-radius:10px;
+  font-family:var(--fur);font-size:.88rem;font-weight:700;
+  cursor:pointer;transition:all .15s;max-width:130px}
+.exit-btn:active{transform:scale(.95)}
+.exit-btn.no{background:rgba(255,255,255,.1);color:#fff;
+  border:1.5px solid rgba(255,255,255,.2)}
+.exit-btn.no:hover{background:rgba(255,255,255,.18)}
+.exit-btn.yes{background:linear-gradient(135deg,#7a1010,#b02020);color:#fff}
+.exit-btn.yes:hover{background:linear-gradient(135deg,#b02020,#d03030)}
+#audio-mini-tab{
+  position:absolute;top:-22px;left:50%;transform:translateX(-50%);
+  background:linear-gradient(135deg,#0d3320,#1b6b45);
+  border:1px solid var(--au2);border-bottom:none;
+  border-radius:10px 10px 0 0;
+  padding:2px 14px;cursor:pointer;
+  color:var(--au2);font-size:.68rem;font-weight:700;
+  white-space:nowrap;user-select:none;
+  display:flex;align-items:center;gap:5px;
+  box-shadow:0 -2px 8px rgba(0,0,0,.3);
+  transition:background .2s;
+}
+#audio-mini-tab:hover{background:linear-gradient(135deg,#1b6b45,#2a9e68)}
+#audio-mini-tab .tab-arrow{transition:transform .25s;display:inline-block}
+#audio-mini.collapsed .tab-arrow{transform:rotate(180deg)}
+#audio-mini.collapsed .mini-prog-wrap,
+#audio-mini.collapsed .mini-row{display:none}
+#audio-mini{position:relative}
 .dl-wrap{background:rgba(0,0,0,.2);border-radius:10px;padding:10px;margin-top:8px}
 .dl-row{display:flex;align-items:center;gap:6px;margin-bottom:7px;flex-wrap:wrap}
 .dl-sel{flex:1;min-width:80px;padding:5px 8px;background:rgba(255,255,255,.08);
@@ -404,7 +454,13 @@ body{font-family:var(--fur);background:var(--bg);color:var(--txt);display:flex;f
 .dl-prog-bar{height:100%;background:linear-gradient(90deg,var(--au),var(--au2));
              border-radius:3px;width:0%;transition:width .3s}
 .dl-status{font-size:.68rem;color:rgba(255,255,255,.5);min-height:16px;line-height:1.6}
-.dl-cached{font-size:.68rem;color:var(--g3);margin-top:3px}
+.dl-dest-row{display:flex;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.dl-dest-opt{display:flex;align-items:center;gap:5px;cursor:pointer;
+             background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);
+             border-radius:8px;padding:5px 10px;font-size:.72rem;color:rgba(255,255,255,.7);
+             transition:all .15s;user-select:none}
+.dl-dest-opt:has(input:checked){background:rgba(224,168,0,.15);border-color:var(--au2);color:var(--au2)}
+.dl-dest-opt input{display:none}
 .dl-badge{display:inline-block;background:rgba(42,158,104,.25);color:var(--g3);
           border:1px solid var(--g3);border-radius:10px;padding:1px 6px;
           font-size:.58rem;margin-right:4px;vertical-align:middle}
@@ -856,6 +912,10 @@ body.fs #fs-hint{display:block}
 
 <!-- PERMANENT AUDIO BAR (between content and bottom-nav) -->
 <div id="audio-mini">
+  <div id="audio-mini-tab" onclick="toggleAudioBar()">
+    <span>🔊 آڈیو</span>
+    <span class="tab-arrow">▼</span>
+  </div>
   <div class="mini-prog-wrap" id="mini-prog-wrap" onclick="seekAudio(event)">
     <div class="mini-prog" id="mini-prog"></div>
   </div>
@@ -872,10 +932,25 @@ body.fs #fs-hint{display:block}
       <button class="mini-btn" onclick="audioJump(5)" title="+5">↪</button>
       <button class="mini-btn" onclick="audioNext()" title="اگلی آیت">⏭</button>
     </div>
+    <div class="mini-speed-wrap">
+      <button class="mini-speed-btn" onclick="changeSpeed(-0.25)">🐢</button>
+      <span class="mini-speed-lbl" id="mini-speed-lbl">1x</span>
+      <button class="mini-speed-btn" onclick="changeSpeed(0.25)">🐇</button>
+    </div>
     <select class="mini-reciter" id="mini-reciter-sel" onchange="changeReciter(this.value)">
-      <option value="Abdul_Basit_Murattal_64kbps">عبدالباسط</option>
+      <option value="Abdul_Basit_Murattal_64kbps">عبدالباسط — مرتّل</option>
+      <option value="Abdul_Basit_Mujawwad_128kbps">عبدالباسط — مجوّد</option>
       <option value="Alafasy_64kbps">العفاسی</option>
       <option value="Abdurrahmaan_As-Sudais_192kbps">السدیس</option>
+      <option value="Idrees_Abkar_128kbps">ادریس ابکر</option>
+      <option value="Maher_AlMuaiqly_64kbps">ماہر المعیقلی</option>
+      <option value="Yasser_Ad-Dussary_128kbps">یاسر الدوسری</option>
+      <option value="Nasser_Alqatami_128kbps">ناصر القطامی</option>
+      <option value="Ghamadi_40kbps">سعد الغامدی</option>
+      <option value="Hudhaify_64kbps">الحذیفی</option>
+      <option value="Muhammad_Ayyoub_64kbps">محمد ایوب</option>
+      <option value="Ahmed_ibn_Ali_al-Ajmy_128kbps">أحمد العجمی</option>
+      <option value="Saood_ash-Shuraym_128kbps">سعود الشریم</option>
       <option value="Abdullah_Basfar_192kbps">بصفر</option>
     </select>
   </div>
@@ -891,46 +966,6 @@ body.fs #fs-hint{display:block}
   <!-- VIEW OPTIONS -->
   <div class="tpsec">
     <div class="tpsec-t">📺 نمائش</div>
-    <div class="tprow">
-      <span class="tprow-lbl"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="8" height="18" rx="1"/><rect x="13" y="3" width="8" height="18" rx="1"/></svg>ڈبل صفحہ</span>
-      <label class="tgl"><input type="checkbox" id="dbl-tgl" onchange="toggleDblPage(this.checked)"><span class="tgl-sl"></span></label>
-    </div>
-    <div class="tprow">
-      <span class="tprow-lbl"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 .49-3.29"/></svg>اسکرین روٹیٹ</span>
-      <label class="tgl"><input type="checkbox" id="rot-tgl" onchange="toggleRotate()"><span class="tgl-sl"></span></label>
-    </div>
-    <div class="tprow">
-      <span class="tprow-lbl"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="4" rx="1"/><rect x="3" y="9" width="18" height="4" rx="1"/><rect x="3" y="15" width="18" height="4" rx="1"/></svg>تھمب نیل</span>
-      <label class="tgl"><input type="checkbox" id="thumb-tgl" onchange="toggleThumbs(this.checked)"><span class="tgl-sl"></span></label>
-    </div>
-    <div class="tprow">
-      <span class="tprow-lbl"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/></svg>صفحہ سلائیڈر</span>
-      <label class="tgl"><input type="checkbox" id="qj-tgl" onchange="toggleQJ(this.checked)"><span class="tgl-sl"></span></label>
-    </div>
-    <div class="tprow">
-      <span class="tprow-lbl"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>فل اسکرین</span>
-      <label class="tgl"><input type="checkbox" id="fs-tgl" onchange="togFS()"><span class="tgl-sl"></span></label>
-    </div>
-    <div class="tprow">
-      <span class="tprow-lbl">🧒 بچوں کا موڈ</span>
-      <label class="tgl"><input type="checkbox" id="kids-tgl" onchange="togKids(this.checked)"><span class="tgl-sl"></span></label>
-    </div>
-    <div class="tprow">
-      <span class="tprow-lbl">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-        اسکرین آن رکھیں
-        <span style="font-size:.58rem;color:rgba(255,255,255,.38);display:block;margin-top:1px">مطالعہ کے دوران اسکرین بند نہ ہو</span>
-      </span>
-      <label class="tgl"><input type="checkbox" id="wl-tgl" onchange="toggleWakeLock(this.checked)"><span class="tgl-sl"></span></label>
-    </div>
-    <div class="tprow">
-      <span class="tprow-lbl">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        پڑھنے کی پٹی
-        <span style="font-size:.58rem;color:rgba(255,255,255,.38);display:block;margin-top:1px">اوپر رنگین پروگریس بار</span>
-      </span>
-      <label class="tgl"><input type="checkbox" id="prog-tgl" onchange="toggleProgBar(this.checked)" checked><span class="tgl-sl"></span></label>
-    </div>
   </div>
 
   <!-- BRIGHTNESS -->
@@ -955,20 +990,6 @@ body.fs #fs-hint{display:block}
       </div>
     </div>
   </div>
-
-  <!-- AUTO SCROLL -->
-  <div class="tpsec">
-    <div class="tpsec-t">⏩ آٹو اسکرول</div>
-    <div class="tprow">
-      <span class="tprow-lbl">رفتار</span>
-      <div class="as-row" style="flex:1;gap:8px;margin-right:8px">
-        <input type="range" id="as-speed" min="1" max="10" value="3">
-        <span id="as-lbl" style="color:var(--au2);font-size:.74rem;min-width:16px">3</span>
-      </div>
-      <button class="as-btn" id="as-btn" onclick="toggleAS()">شروع</button>
-    </div>
-  </div>
-
   <!-- SLEEP TIMER -->
   <div class="tpsec">
     <div class="tpsec-t">😴 سلیپ ٹائمر</div>
@@ -1007,23 +1028,6 @@ body.fs #fs-hint{display:block}
   <div class="tpsec">
     <div class="tpsec-t">🕘 حالیہ صفحات</div>
     <div id="histlist"></div>
-  </div>
-
-  <!-- SHARE & EXPORT -->
-  <div class="tpsec">
-    <div class="tpsec-t">📤 شیئر و برآمد</div>
-    <button class="act-btn" onclick="sharePg()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-      موجودہ صفحہ شیئر کریں
-    </button>
-    <button class="act-btn" onclick="exportNotes()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      تمام نوٹس برآمد کریں (TXT)
-    </button>
-    <button class="act-btn" onclick="openStats()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-      پڑھنے کی پیشرفت دیکھیں
-    </button>
   </div>
 
   <!-- SECURITY -->
@@ -1086,9 +1090,19 @@ body.fs #fs-hint{display:block}
   <div class="tpsec">
     <div class="tpsec-t">🔊 آڈیو تلاوت</div>
     <select class="reciter-sel" id="reciter-sel" onchange="changeReciter(this.value)">
-      <option value="Abdul_Basit_Murattal_64kbps">عبدالباسط — مرتّل</option>
-      <option value="Alafasy_64kbps">مشاری العفاسی</option>
+      <option value="Abdul_Basit_Murattal_64kbps">عبدالباسط عبدالصمد — مرتّل</option>
+      <option value="Abdul_Basit_Mujawwad_128kbps">عبدالباسط عبدالصمد — مجوّد</option>
+      <option value="Alafasy_64kbps">مشاری بن راشد العفاسی</option>
       <option value="Abdurrahmaan_As-Sudais_192kbps">عبدالرحمن السدیس</option>
+      <option value="Idrees_Abkar_128kbps">ادریس ابکر</option>
+      <option value="Maher_AlMuaiqly_64kbps">ماہر المعیقلی</option>
+      <option value="Yasser_Ad-Dussary_128kbps">یاسر الدوسری</option>
+      <option value="Nasser_Alqatami_128kbps">ناصر القطامی</option>
+      <option value="Ghamadi_40kbps">سعد الغامدی</option>
+      <option value="Hudhaify_64kbps">علی الحذیفی</option>
+      <option value="Muhammad_Ayyoub_64kbps">محمد ایوب</option>
+      <option value="Ahmed_ibn_Ali_al-Ajmy_128kbps">أحمد بن علی العجمی</option>
+      <option value="Saood_ash-Shuraym_128kbps">سعود الشریم</option>
       <option value="Abdullah_Basfar_192kbps">عبداللہ بصفر</option>
     </select>
     <div class="audio-wrap">
@@ -1113,6 +1127,7 @@ body.fs #fs-hint{display:block}
       </div>
     </div>
     <audio id="audio-el"></audio>
+    <audio id="audio-el2" style="display:none"></audio>
   </div>
 
   <!-- AUDIO DOWNLOAD -->
@@ -1136,7 +1151,7 @@ body.fs #fs-hint{display:block}
         <div class="dl-status" id="local-status"></div>
       </div>
 
-      <!-- DOWNLOAD -->
+      <!-- DOWNLOAD to cache -->
       <div style="color:rgba(255,255,255,.6);font-size:.72rem;margin-bottom:6px">🌐 انٹرنیٹ سے ڈاؤنلوڈ کریں</div>
       <div class="dl-row">
         <select class="dl-sel" id="dl-surah-from">
@@ -1146,11 +1161,29 @@ body.fs #fs-hint{display:block}
           <option value="">سورۃ — آخر</option>
         </select>
       </div>
+      <!-- Save destination -->
+      <div class="dl-dest-row">
+        <label class="dl-dest-opt">
+          <input type="radio" name="dl-dest" value="cache" checked onchange="updDlDest(this.value)">
+          <span>📥 ایپ میں (آف لائن)</span>
+        </label>
+        <label class="dl-dest-opt">
+          <input type="radio" name="dl-dest" value="device" onchange="updDlDest(this.value)">
+          <span>💾 فون/کارڈ (ZIP)</span>
+        </label>
+      </div>
+      <!-- Merge option (shown only for device) -->
+      <div id="dl-merge-row" class="tprow" style="display:none;margin-bottom:8px">
+        <span class="tprow-lbl" style="font-size:.74rem">🔗 ہر سورۃ کو ایک فائل میں ملائیں</span>
+        <label class="tgl"><input type="checkbox" id="dl-merge-tgl" checked><span class="tgl-sl"></span></label>
+      </div>
       <div class="dl-row">
-        <button class="dl-btn" onclick="startDownload()">⬇ ڈاؤنلوڈ کریں</button>
+        <button class="dl-btn" id="dl-start-btn" onclick="startDownload()">⬇ ڈاؤنلوڈ کریں</button>
         <button class="dl-btn" onclick="downloadCurrentSurah()">موجودہ سورۃ</button>
+        <button class="dl-btn" id="dl-folder-btn" onclick="pickFolder()" style="display:none">📁 فولڈر منتخب</button>
         <button class="dl-btn red" onclick="clearAudioCache()">🗑 کیش خالی</button>
       </div>
+      <div id="dl-folder-info" style="font-size:.68rem;color:var(--g3);margin-bottom:4px;display:none"></div>
       <div class="dl-prog-wrap" id="dl-prog-wrap" style="display:none">
         <div class="dl-prog-bar" id="dl-prog-bar"></div>
       </div>
@@ -1195,27 +1228,6 @@ body.fs #fs-hint{display:block}
     <div style="color:rgba(255,255,255,.32);font-size:.67rem;margin-top:6px;line-height:1.7" id="pwa-status">
       ⏳ انسٹال آپشن لوڈ ہو رہا ہے...
     </div>
-  </div>
-
-  <!-- SHARE & EXPORT -->
-  <div class="tpsec">
-    <div class="tpsec-t">📤 شیئر و برآمد</div>
-    <button class="act-btn" onclick="sharePg()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-      موجودہ صفحہ شیئر کریں
-    </button>
-    <button class="act-btn wa-btn" onclick="shareWhatsApp()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-      واٹس ایپ پر پیشرفت شیئر کریں
-    </button>
-    <button class="act-btn" onclick="exportNotes()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      تمام نوٹس برآمد کریں (TXT)
-    </button>
-    <button class="act-btn" onclick="openStats()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-      پڑھنے کی پیشرفت دیکھیں
-    </button>
   </div>
 
   <!-- SECURITY -->
@@ -1491,41 +1503,72 @@ function svSt(){
 ldSt();
 
 // ═══════════════════════════════════════
-// IndexedDB
-const DB='tq_pdf_urdu',ST='pdf';
-let idb=null;
-function openIDB(){
-  return new Promise((ok,err)=>{
-    const r=indexedDB.open(DB,1);
-    r.onupgradeneeded=e=>e.target.result.createObjectStore(ST);
-    r.onsuccess=e=>{idb=e.target.result;ok()};
-    r.onerror=()=>err();
+// PDF STORAGE — IndexedDB (مکمل درست کوڈ)
+// اہم اصول:
+// 1. onsuccess کے اندر async/await ہرگز نہ کریں — IDB transaction بند ہوجاتی ہے
+// 2. buf.slice(0) ہمیشہ کریں — pdf.js ArrayBuffer transfer کرسکتا ہے
+// 3. ArrayBuffer براہِ راست store کریں — Blob نہیں
+
+const _IDB_NAME  = 'quran_pdf_db';
+const _IDB_STORE = 'pdfs';
+
+function _idbOpen(){
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(_IDB_NAME, 1);
+    req.onupgradeneeded = e => {
+      e.target.result.createObjectStore(_IDB_STORE);
+    };
+    req.onsuccess = e => resolve(e.target.result);
+    req.onerror   = () => reject(new Error('IDB کھلنے میں خرابی'));
   });
 }
-async function idbPut(buf,name){
-  if(!idb)await openIDB();
-  return new Promise((ok,er)=>{
-    const tx=idb.transaction(ST,'readwrite');
-    tx.objectStore(ST).put({buf,name},'main');
-    tx.oncomplete=ok; tx.onerror=er;
+
+async function savePdfToDB(buf, name){
+  const db = await _idbOpen();
+  const copy = buf.slice(0); // pdf.js transfer سے بچانے کے لیے copy
+  return new Promise((resolve, reject) => {
+    const tx  = db.transaction(_IDB_STORE, 'readwrite');
+    tx.objectStore(_IDB_STORE).put({ buf: copy, name }, 'current');
+    tx.oncomplete = () => { db.close(); resolve(true); };
+    tx.onerror    = () => { db.close(); reject(tx.error); };
+    tx.onabort    = () => { db.close(); reject(new Error('Transaction abort')); };
   });
 }
-async function idbGet(){
-  if(!idb)await openIDB();
-  return new Promise((ok,er)=>{
-    const r=idb.transaction(ST,'readonly').objectStore(ST).get('main');
-    r.onsuccess=e=>ok(e.target.result||null);
-    r.onerror=er;
+
+async function loadPdfFromDB(){
+  const db = await _idbOpen();
+  return new Promise((resolve, reject) => {
+    const tx  = db.transaction(_IDB_STORE, 'readonly');
+    const req = tx.objectStore(_IDB_STORE).get('current');
+    // ⚠ یہاں async/await ہرگز نہ لکھیں
+    req.onsuccess = e => {
+      const rec = e.target.result;
+      if(rec && rec.buf && rec.buf.byteLength > 0){
+        resolve({ buf: rec.buf.slice(0), name: rec.name }); // fresh copy
+      } else {
+        resolve(null);
+      }
+    };
+    req.onerror = () => reject(req.error);
+    tx.oncomplete = () => db.close();
   });
 }
-async function idbDel(){
-  if(!idb)await openIDB();
-  return new Promise((ok,er)=>{
-    const tx=idb.transaction(ST,'readwrite');
-    tx.objectStore(ST).delete('main');
-    tx.oncomplete=ok; tx.onerror=er;
+
+async function deletePdfFromDB(){
+  const db = await _idbOpen();
+  return new Promise((resolve) => {
+    const tx = db.transaction(_IDB_STORE, 'readwrite');
+    tx.objectStore(_IDB_STORE).delete('current');
+    tx.oncomplete = () => { db.close(); resolve(true); };
+    tx.onerror    = () => { db.close(); resolve(false); };
   });
 }
+
+// alias — باقی کوڈ استعمال کرتا ہے
+function openIDB(){ return _idbOpen(); }
+async function idbPut(buf,name){ return savePdfToDB(buf,name); }
+async function idbGet(){ return loadPdfFromDB(); }
+async function idbDel(){ return deletePdfFromDB(); }
 
 // ═══════════════════════════════════════
 // SYNC AUDIO PLAYER with sidebar selection
@@ -1694,12 +1737,18 @@ function doDrop(e){e.preventDefault();dol();const f=e.dataTransfer.files[0];
   if(f&&f.type==='application/pdf')doRead(f);else toast('صرف PDF فائل!');}
 
 function doRead(f){
-  showLdg('PDF محفوظ اور لوڈ ہو رہی ہے...');
-  const fr=new FileReader();
-  fr.onload=async e=>{
-    const buf=e.target.result;
-    try{await idbPut(buf,f.name);localStorage.setItem('tqname',f.name);}catch(x){}
-    await initPDF(buf,f.name,true);
+  showLdg('PDF لوڈ ہو رہی ہے...');
+  const fr = new FileReader();
+  fr.onload = async e => {
+    const buf = e.target.result.slice(0); // fresh copy
+    try{
+      await savePdfToDB(buf.slice(0), f.name); // storage کے لیے الگ copy
+      localStorage.setItem('tqname', f.name);
+      toast('✅ PDF محفوظ ہوگئی');
+    }catch(x){
+      toast('⚠ PDF محفوظ نہیں ہوسکی');
+    }
+    await initPDF(buf, f.name, true);
   };
   fr.readAsArrayBuffer(f);
 }
@@ -2024,12 +2073,12 @@ function swTab(t,el){
   body.querySelector(`#tp${t===undefined?'s':t},#mtp${t}`).classList.add('on');
 }
 function swMT(t,el){
-  ['s','p'].forEach(x=>{
-    document.getElementById(`mts`.replace('s',x==='s'?'s':'p')).classList.remove('on');
-    document.getElementById(`mtps`.replace('s',x)).classList.remove('on');
-  });
-  document.getElementById(`mt${t}`).classList.add('on');
-  document.getElementById(`mtp${t}`).classList.add('on');
+  document.getElementById('mts').classList.remove('on');
+  document.getElementById('mtp').classList.remove('on');
+  document.getElementById('mtps').classList.remove('on');
+  document.getElementById('mtpp').classList.remove('on');
+  if(t==='s'){document.getElementById('mts').classList.add('on');document.getElementById('mtps').classList.add('on');}
+  else{document.getElementById('mtp').classList.add('on');document.getElementById('mtpp').classList.add('on');}
 }
 function openMob(m){
   document.getElementById('mov').classList.add('on');
@@ -2252,20 +2301,20 @@ function updQJ(){
 // PAGE HISTORY
 let pgHist=[];
 function ldHist(){try{pgHist=JSON.parse(localStorage.getItem('tqhist')||'[]');}catch(e){pgHist=[];}}
-function svHist(){localStorage.setItem('tqhist',JSON.stringify(pgHist.slice(0,20)));}
+function svHist(){localStorage.setItem('tqhist',JSON.stringify(pgHist.slice(0,5)));}
 function addHist(n){
   pgHist=pgHist.filter(h=>h.pg!==n);
   let sname='';
   for(let i=APK.length-1;i>=0;i--){if(sPg(i)<=n){sname=SU[i];break;}}
   pgHist.unshift({pg:n,lbl:sname,ts:Date.now()});
-  if(pgHist.length>20)pgHist=pgHist.slice(0,20);
+  if(pgHist.length>5)pgHist=pgHist.slice(0,5);
   svHist();
 }
 function renderHist(){
   const el=document.getElementById('histlist');
   if(!el)return;
   if(!pgHist.length){el.innerHTML='<div style="color:rgba(255,255,255,.3);font-size:.72rem;padding:8px 0">ابھی کوئی تاریخ نہیں</div>';return;}
-  el.innerHTML=pgHist.slice(0,10).map(h=>{
+  el.innerHTML=pgHist.slice(0,5).map(h=>{
     const d=new Date(h.ts);
     const t=`${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;
     return`<div class="hrow" onclick="goP(${h.pg});closeTools()">
@@ -2450,26 +2499,13 @@ function updProgBar(){
 
 // ═══════════════════════════════════════
 // SHARE CURRENT PAGE
-async function sharePg(){
-  if(!PDF){toast('پہلے PDF لوڈ کریں');return;}
-  let sname='';
-  for(let i=APK.length-1;i>=0;i--){if(sPg(i)<=curPg){sname=SU[i];break;}}
-  const txt=`📖 القرآن الکریم — صفحہ ${curPg}${sname?' | '+sname:''} (کل: ${totPg} صفحات)`;
-  if(navigator.share){
-    try{await navigator.share({title:'القرآن الکریم',text:txt});return;}catch(e){}
-  }
-  // fallback: copy to clipboard
-  try{
-    await navigator.clipboard.writeText(txt);
-    toast('📋 کلپ بورڈ میں محفوظ');
-  }catch(e){toast('شیئر دستیاب نہیں');}
-}
 
 // ═══════════════════════════════════════
 // AUDIO RECITATION
 let audioSurah=1,audioAyah=1,audioPlaying=false,audioReciter='Abdul_Basit_Murattal_64kbps';
 let audioAutoPlay=false;
-let audioManualSet=false; // true = user picked surah/ayah manually, don't auto-override
+let audioManualSet=false;
+let audioSpeed=1;
 
 // Compute verse offsets (cumulative ayahs per surah from APK data)
 function getAyahOffset(surahIdx){
@@ -2526,7 +2562,7 @@ function updAudioLabels(){
 }
 
 function toggleAudio(){
-  const el=document.getElementById('audio-el');
+  const el=_activeEl();
   if(audioPlaying){
     el.pause();audioPlaying=false;
     document.getElementById('audio-play-btn').textContent='▶';
@@ -2534,13 +2570,12 @@ function toggleAudio(){
     document.getElementById('mini-play-btn').textContent='▶';
     document.getElementById('mini-play-btn').classList.remove('active');
   } else {
-    // اگر صارف نے فہرست سے انتخاب نہ کیا ہو تو موجودہ صفحہ سے شروع کریں
     if(!audioManualSet && PDF && curPg){
       const {surahNum,ayah}=getPageSurahAyah(curPg);
       audioSurah=surahNum; audioAyah=ayah;
       updAudioLabels();
     }
-    audioManualSet=false; // پلے کے بعد ریسیٹ — اگلا صفحہ پھر خودبخود اپڈیٹ ہوگا
+    audioManualSet=false;
     loadAndPlay(audioSurah,audioAyah);
   }
 }
@@ -2612,11 +2647,15 @@ async function clearAllCache(){
 async function loadAndPlay(surah,ayah){
   if(!PDF){toast('پہلے PDF لوڈ کریں');return;}
   audioSurah=surah;audioAyah=ayah;
-  const el=document.getElementById('audio-el');
+  _preloaded={surah:null,ayah:null,src:null}; // reset preload
+
+  // pause both elements
+  _getAudioEl(0).pause(); _getAudioEl(1).pause();
+
+  const el=_activeEl();
   document.getElementById('audio-loading').textContent='⏳ لوڈ ہو رہا ہے...';
   document.getElementById('mini-loading').textContent='⏳';
 
-  // Try cache first
   const cached=await getFromCache(surah,ayah,audioReciter);
   let src;
   if(cached){
@@ -2625,11 +2664,11 @@ async function loadAndPlay(surah,ayah){
     setTimeout(()=>{if(document.getElementById('mini-loading').textContent==='📥')document.getElementById('mini-loading').textContent='';},1200);
   } else {
     src=audioUrl(surah,ayah);
-    // save to cache in background after playing
     fetch(src).then(r=>r.blob()).then(b=>saveToCache(surah,ayah,audioReciter,b)).catch(()=>{});
   }
 
-  el.src=src;el.load();
+  el.src=src; el.load();
+  _attachListeners();
   el.play().then(()=>{
     audioPlaying=true;
     document.getElementById('audio-play-btn').textContent='⏸';
@@ -2639,7 +2678,10 @@ async function loadAndPlay(surah,ayah){
     document.getElementById('audio-mini').classList.add('on');
     document.getElementById('audio-loading').textContent='';
     document.getElementById('mini-loading').textContent='';
+    el.playbackRate=audioSpeed;
     updAudioLabels();
+    // start pre-loading next
+    _preloadNext();
   }).catch(e=>{
     document.getElementById('audio-loading').textContent='⚠ لوڈ نہیں ہوا — انٹرنیٹ چیک کریں';
     document.getElementById('mini-loading').textContent='⚠ انٹرنیٹ چیک کریں';
@@ -2653,7 +2695,32 @@ async function loadAndPlay(surah,ayah){
 
 // ═══════════════════════════════════════
 // DOWNLOAD MANAGER
-let dlRunning=false,dlAbort=false;
+let dlRunning=false,dlAbort=false,dlDest='cache';
+
+let _selectedDir=null;
+
+function updDlDest(v){
+  dlDest=v;
+  const btn=document.getElementById('dl-start-btn');
+  const mergeRow=document.getElementById('dl-merge-row');
+  const folderBtn=document.getElementById('dl-folder-btn');
+  if(btn) btn.textContent = v==='device' ? '💾 ZIP بنائیں' : '⬇ ڈاؤنلوڈ کریں';
+  if(mergeRow) mergeRow.style.display = v==='device' ? 'flex' : 'none';
+  // show folder picker only if File System Access API supported
+  if(folderBtn) folderBtn.style.display=(v==='device'&&'showDirectoryPicker' in window)?'inline-block':'none';
+}
+
+async function pickFolder(){
+  try{
+    _selectedDir=await window.showDirectoryPicker({mode:'readwrite'});
+    const info=document.getElementById('dl-folder-info');
+    info.style.display='block';
+    info.textContent=`📁 منتخب فولڈر: ${_selectedDir.name}`;
+    toast(`📁 فولڈر منتخب: ${_selectedDir.name}`);
+  }catch(e){
+    if(e.name!=='AbortError') toast('فولڈر منتخب نہیں ہوا');
+  }
+}
 
 function populateDlSelects(){
   const from=document.getElementById('dl-surah-from');
@@ -2682,25 +2749,31 @@ async function startDownload(){
   const toI=parseInt(toSel.value);
   if(isNaN(fromI)||isNaN(toI)){toast('سورۃ منتخب کریں');return;}
 
-  // Build list of all ayahs to download
+  if(dlDest==='device'){
+    await downloadToDevice(fromI, toI);
+  } else {
+    await downloadToCache(fromI, toI);
+  }
+}
+
+async function downloadToCache(fromI, toI){
+  // Build list of all ayahs
   const jobs=[];
   for(let si=Math.min(fromI,toI);si<=Math.max(fromI,toI);si++){
     const s=APK[si];
     for(let a=1;a<=s.ta;a++) jobs.push({surah:s.n,ayah:a});
   }
-
   const total=jobs.length;
   dlRunning=true;dlAbort=false;
   const progWrap=document.getElementById('dl-prog-wrap');
   const progBar=document.getElementById('dl-prog-bar');
   const status=document.getElementById('dl-status');
   progWrap.style.display='block';
-  document.querySelector('[onclick="startDownload()"]').textContent='⏹ روکیں';
+  document.getElementById('dl-start-btn').textContent='⏹ روکیں';
 
   let done=0,skipped=0,failed=0;
   for(const {surah,ayah} of jobs){
     if(dlAbort)break;
-    // check if already cached
     const already=await getFromCache(surah,ayah,audioReciter);
     if(already){skipped++;done++;progBar.style.width=(done/total*100)+'%';continue;}
     try{
@@ -2711,14 +2784,182 @@ async function startDownload(){
       done++;
     }catch(e){failed++;done++;}
     progBar.style.width=(done/total*100)+'%';
-    status.textContent=`${done}/${total} — سورۃ ${surah} آیت ${ayah}${failed?' | ⚠ '+failed+' ناکام':''}`;
+    if(done%10===0||done===total)
+      status.textContent=`${done}/${total} — سورۃ ${jobs[Math.min(done,total)-1].surah} آیت ${jobs[Math.min(done,total)-1].ayah}${failed?' | ⚠ '+failed+' ناکام':''}`;
+  }
+  dlRunning=false;
+  document.getElementById('dl-start-btn').textContent='⬇ ڈاؤنلوڈ کریں';
+  if(dlAbort){status.textContent='⏹ روک دیا گیا';dlAbort=false;}
+  else status.textContent=`✓ مکمل — ${done-skipped} ڈاؤنلوڈ، ${skipped} پہلے سے موجود`;
+  updCacheInfo();
+}
+
+async function downloadToDevice(fromI, toI){
+  const sFrom=APK[Math.min(fromI,toI)];
+  const sTo=APK[Math.max(fromI,toI)];
+  const mergeChk=document.getElementById('dl-merge-tgl');
+  const doMerge = mergeChk ? mergeChk.checked : true;
+
+  const progWrap=document.getElementById('dl-prog-wrap');
+  const progBar=document.getElementById('dl-prog-bar');
+  const status=document.getElementById('dl-status');
+  progWrap.style.display='block';
+  document.getElementById('dl-start-btn').textContent='⏹ روکیں';
+  dlRunning=true; dlAbort=false;
+
+  const recName=audioReciter.split('_')[0];
+  const zip=new JSZip();
+
+  // Process each surah
+  const surahRange=[];
+  for(let si=Math.min(fromI,toI);si<=Math.max(fromI,toI);si++) surahRange.push(si);
+  const totalSurahs=surahRange.length;
+
+  for(let si_idx=0; si_idx<surahRange.length; si_idx++){
+    if(dlAbort) break;
+    const si=surahRange[si_idx];
+    const s=APK[si];
+    const surahName=SN[si];
+    const ayahCount=s.ta;
+    status.textContent=`⏳ ${surahName} (${si_idx+1}/${totalSurahs}) — ${doMerge?'ملا رہے ہیں...':'ڈاؤنلوڈ ہو رہا ہے...'}`;
+
+    // Fetch all ayah blobs for this surah
+    const blobs=[];
+    let failed=0;
+    for(let a=1;a<=ayahCount;a++){
+      if(dlAbort) break;
+      let blob=await getFromCache(s.n,a,audioReciter);
+      if(!blob){
+        try{
+          const resp=await fetch(audioUrl(s.n,a));
+          if(resp.ok){ blob=await resp.blob(); await saveToCache(s.n,a,audioReciter,blob); }
+        }catch(e){}
+      }
+      blobs.push(blob||null);
+      if(!blob) failed++;
+      const pct=((si_idx/totalSurahs)+(a/ayahCount/totalSurahs))*100;
+      progBar.style.width=Math.min(pct,99)+'%';
+      status.textContent=`⏳ ${surahName} — آیت ${a}/${ayahCount}${failed?' ⚠'+failed:''}`;
+    }
+    if(dlAbort) break;
+
+    const numPad=String(s.n).padStart(3,'0');
+    const folder=totalSurahs>1 ? `${numPad}_${surahName}/` : '';
+
+    if(doMerge){
+      // Merge all ayah MP3s into one file using AudioContext
+      status.textContent=`🔗 ${surahName} — ملا رہے ہیں (${blobs.filter(Boolean).length} آیتیں)...`;
+      try{
+        const actx=new (window.AudioContext||window.webkitAudioContext)();
+        const decoded=[];
+        for(const blob of blobs){
+          if(!blob) continue;
+          try{
+            const ab=await blob.arrayBuffer();
+            const buf=await actx.decodeAudioData(ab);
+            decoded.push(buf);
+          }catch(e){}
+        }
+        if(decoded.length===0) continue;
+        const channels=decoded[0].numberOfChannels;
+        const sampleRate=decoded[0].sampleRate;
+        const totalLen=decoded.reduce((s,b)=>s+b.length,0);
+        const merged=actx.createBuffer(channels,totalLen,sampleRate);
+        let offset=0;
+        for(const buf of decoded){
+          for(let ch=0;ch<channels;ch++){
+            merged.getChannelData(ch).set(buf.getChannelData(ch),offset);
+          }
+          offset+=buf.length;
+        }
+        actx.close();
+        // Encode merged buffer to WAV
+        const wavBlob=audioBufferToWav(merged);
+        const fname=`${numPad}_${surahName}_${recName}.wav`;
+        zip.file(folder+fname, wavBlob);
+      }catch(e){
+        status.textContent=`⚠ ${surahName} merge خرابی: ${e.message}`;
+        // fallback: add ayahs separately
+        blobs.forEach((b,i)=>{ if(b) zip.file(folder+`${numPad}${String(i+1).padStart(3,'0')}.mp3`,b); });
+      }
+    } else {
+      // Add individual MP3 files
+      blobs.forEach((b,i)=>{
+        if(b) zip.file(folder+`${numPad}${String(i+1).padStart(3,'0')}.mp3`, b);
+      });
+    }
+    progBar.style.width=((si_idx+1)/totalSurahs*90)+'%';
   }
 
+  if(dlAbort){
+    dlRunning=false;
+    document.getElementById('dl-start-btn').textContent='💾 ZIP بنائیں';
+    status.textContent='⏹ روک دیا گیا'; dlAbort=false; return;
+  }
+
+  status.textContent='📦 ZIP فائل بن رہی ہے...';
+  try{
+    const zipBlob=await zip.generateAsync(
+      {type:'blob',compression:'DEFLATE',compressionOptions:{level:1}},
+      meta=>{ progBar.style.width=(90+meta.percent*0.1).toFixed(0)+'%'; }
+    );
+    const zipName=totalSurahs===1
+      ? `${String(sFrom.n).padStart(3,'0')}_${SN[Math.min(fromI,toI)]}_${recName}${doMerge?'_merged':''}.zip`
+      : `Quran_${String(sFrom.n).padStart(3,'0')}-${String(sTo.n).padStart(3,'0')}_${recName}${doMerge?'_merged':''}.zip`;
+
+    // If user picked a folder, save directly there
+    if(_selectedDir){
+      try{
+        const fh=await _selectedDir.getFileHandle(zipName,{create:true});
+        const ws=await fh.createWritable();
+        await ws.write(zipBlob);
+        await ws.close();
+        progBar.style.width='100%';
+        status.textContent=`✓ ${_selectedDir.name}/${zipName} میں محفوظ`;
+        dlRunning=false;
+        document.getElementById('dl-start-btn').textContent='💾 ZIP بنائیں';
+        return;
+      }catch(e){ /* fallback to download */ }
+    }
+
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(zipBlob);
+    a.download=zipName;
+    document.body.appendChild(a); a.click();
+    setTimeout(()=>{URL.revokeObjectURL(a.href);document.body.removeChild(a);},3000);
+    progBar.style.width='100%';
+    status.textContent=`✓ ${zipName} ڈاؤنلوڈ شروع`;
+  }catch(e){
+    status.textContent='⚠ ZIP خرابی: '+e.message;
+  }
   dlRunning=false;
-  document.querySelector('[onclick="startDownload()"]').textContent='⬇ ڈاؤنلوڈ کریں';
-  if(dlAbort){status.textContent='⏹ روک دیا گیا';dlAbort=false;}
-  else{status.textContent=`✓ مکمل — ${done-skipped} ڈاؤنلوڈ، ${skipped} پہلے سے موجود`;}
-  updCacheInfo();
+  document.getElementById('dl-start-btn').textContent='💾 ZIP بنائیں';
+}
+
+// ── WAV encoder ──
+function audioBufferToWav(buf){
+  const numCh=buf.numberOfChannels;
+  const numSamples=buf.length;
+  const sampleRate=buf.sampleRate;
+  const byteRate=sampleRate*numCh*2;
+  const dataSize=numSamples*numCh*2;
+  const ab=new ArrayBuffer(44+dataSize);
+  const view=new DataView(ab);
+  const writeStr=(o,s)=>{for(let i=0;i<s.length;i++)view.setUint8(o+i,s.charCodeAt(i));};
+  writeStr(0,'RIFF');view.setUint32(4,36+dataSize,true);writeStr(8,'WAVE');
+  writeStr(12,'fmt ');view.setUint32(16,16,true);view.setUint16(20,1,true);
+  view.setUint16(22,numCh,true);view.setUint32(24,sampleRate,true);
+  view.setUint32(28,byteRate,true);view.setUint16(32,numCh*2,true);
+  view.setUint16(34,16,true);writeStr(36,'data');view.setUint32(40,dataSize,true);
+  let offset=44;
+  for(let i=0;i<numSamples;i++){
+    for(let ch=0;ch<numCh;ch++){
+      const s=Math.max(-1,Math.min(1,buf.getChannelData(ch)[i]));
+      view.setInt16(offset,s<0?s*0x8000:s*0x7FFF,true);
+      offset+=2;
+    }
+  }
+  return new Blob([ab],{type:'audio/wav'});
 }
 
 async function clearAudioCache(){
@@ -2798,6 +3039,30 @@ document.addEventListener('DOMContentLoaded',()=>{
   updCacheInfo();
 });
 
+function toggleAudioBar(){
+  const bar=document.getElementById('audio-mini');
+  bar.classList.toggle('collapsed');
+  localStorage.setItem('tq_audio_bar_collapsed', bar.classList.contains('collapsed')?'1':'0');
+}
+
+// restore collapsed state on load
+document.addEventListener('DOMContentLoaded',()=>{
+  if(localStorage.getItem('tq_audio_bar_collapsed')==='1'){
+    document.getElementById('audio-mini').classList.add('collapsed');
+  }
+});
+
+function changeSpeed(delta){
+  const steps=[0.5,0.75,1,1.25,1.5,1.75,2];
+  let idx=steps.findIndex(s=>Math.abs(s-audioSpeed)<0.01);
+  idx=Math.max(0,Math.min(steps.length-1,idx+Math.sign(delta)));
+  audioSpeed=steps[idx];
+  const el=document.getElementById('audio-el');
+  if(el) el.playbackRate=audioSpeed;
+  const lbl=document.getElementById('mini-speed-lbl');
+  if(lbl) lbl.textContent=audioSpeed+'x';
+}
+
 function audioNext(){
   const totalAyahs=APK[audioSurah-1]?.ta||286;
   if(audioAyah<totalAyahs){loadAndPlay(audioSurah,audioAyah+1);}
@@ -2818,8 +3083,10 @@ function audioJump(delta){
 }
 
 function stopAudioCompletely(){
-  const el=document.getElementById('audio-el');
-  el.pause();el.src='';audioPlaying=false;
+  _getAudioEl(0).pause(); _getAudioEl(1).pause();
+  _getAudioEl(0).src=''; _getAudioEl(1).src='';
+  _preloaded={surah:null,ayah:null,src:null};
+  audioPlaying=false;
   document.getElementById('audio-play-btn').textContent='▶';
   document.getElementById('audio-play-btn').classList.remove('active');
   document.getElementById('mini-play-btn').textContent='▶';
@@ -2837,26 +3104,93 @@ function seekAudio(e){
 }
 
 // audio event listeners
+// ═══════════════════════════════════════
+// SEAMLESS AUDIO — dual buffer system
+// Two <audio> elements swap roles: one plays, one pre-loads next ayah
+let _activeBuf=0; // 0 or 1
+let _preloaded={surah:null,ayah:null,src:null};
+
+function _getAudioEl(idx){ return document.getElementById(idx===0?'audio-el':'audio-el2'); }
+function _activeEl(){ return _getAudioEl(_activeBuf); }
+function _bufEl(){ return _getAudioEl(1-_activeBuf); }
+
+async function _preloadNext(){
+  const totalAyahs=APK[audioSurah-1]?.ta||286;
+  let ns=audioSurah,na=audioAyah+1;
+  if(na>totalAyahs){if(audioSurah<114){ns=audioSurah+1;na=1;}else return;}
+  if(_preloaded.surah===ns&&_preloaded.ayah===na)return; // already loaded
+  const cached=await getFromCache(ns,na,audioReciter);
+  const src=cached?URL.createObjectURL(cached):audioUrl(ns,na);
+  const buf=_bufEl();
+  buf.src=src; buf.load();
+  buf.playbackRate=audioSpeed;
+  _preloaded={surah:ns,ayah:na,src};
+}
+
+function _onTimeUpdate(){
+  const el=_activeEl();
+  if(!el.duration)return;
+  const pct=el.currentTime/el.duration*100;
+  document.getElementById('audio-prog').style.width=pct+'%';
+  document.getElementById('mini-prog').style.width=pct+'%';
+  // pre-load next when 70% done
+  if(pct>70&&(_preloaded.surah!==audioSurah||_preloaded.ayah!==audioAyah+1)){
+    _preloadNext();
+  }
+}
+
+function _onEnded(){
+  // if next ayah was pre-loaded, swap instantly
+  const totalAyahs=APK[audioSurah-1]?.ta||286;
+  let ns=audioSurah,na=audioAyah+1;
+  if(na>totalAyahs){if(audioSurah<114){ns=audioSurah+1;na=1;}else{stopAudioCompletely();toast('قرآن کریم مکمل ✓');return;}}
+
+  if(_preloaded.surah===ns&&_preloaded.ayah===na){
+    // seamless swap
+    const buf=_bufEl();
+    buf.playbackRate=audioSpeed;
+    buf.play().then(()=>{
+      _activeEl().pause();
+      _activeBuf=1-_activeBuf; // swap
+      audioSurah=ns; audioAyah=na;
+      updAudioLabels();
+      // start pre-loading the one after
+      _preloaded={surah:null,ayah:null,src:null};
+      _preloadNext();
+      // re-attach timeupdate & ended to new active
+      _attachListeners();
+    }).catch(()=>{ loadAndPlay(ns,na); }); // fallback
+  } else {
+    loadAndPlay(ns,na);
+  }
+}
+
+function _onError(){
+  document.getElementById('audio-loading').textContent='⚠ آڈیو نہیں ملی';
+  document.getElementById('mini-loading').textContent='⚠ آڈیو نہیں ملی';
+  audioPlaying=false;
+  document.getElementById('audio-play-btn').textContent='▶';
+  document.getElementById('audio-play-btn').classList.remove('active');
+  document.getElementById('mini-play-btn').textContent='▶';
+  document.getElementById('mini-play-btn').classList.remove('active');
+}
+
+function _attachListeners(){
+  ['audio-el','audio-el2'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    el.onended=null; el.ontimeupdate=null; el.onerror=null;
+  });
+  const a=_activeEl();
+  a.ontimeupdate=_onTimeUpdate;
+  a.onended=_onEnded;
+  a.onerror=_onError;
+}
+
 document.addEventListener('DOMContentLoaded',()=>{
   const el=document.getElementById('audio-el');
   if(!el)return;
-  el.addEventListener('ended',()=>audioNext());
-  el.addEventListener('timeupdate',()=>{
-    if(el.duration){
-      const pct=el.currentTime/el.duration*100;
-      document.getElementById('audio-prog').style.width=pct+'%';
-      document.getElementById('mini-prog').style.width=pct+'%';
-    }
-  });
-  el.addEventListener('error',()=>{
-    document.getElementById('audio-loading').textContent='⚠ آڈیو نہیں ملی';
-    document.getElementById('mini-loading').textContent='⚠ آڈیو نہیں ملی';
-    audioPlaying=false;
-    document.getElementById('audio-play-btn').textContent='▶';
-    document.getElementById('audio-play-btn').classList.remove('active');
-    document.getElementById('mini-play-btn').textContent='▶';
-    document.getElementById('mini-play-btn').classList.remove('active');
-  });
+  _attachListeners();
   document.getElementById('audio-auto-tgl').addEventListener('change',e=>{
     audioAutoPlay=e.target.checked;
     toast(audioAutoPlay?'🔊 خودبخود تلاوت آن':'خودبخود تلاوت آف');
@@ -3059,34 +3393,6 @@ function ldScrollMem(){
 
 // ═══════════════════════════════════════
 // WHATSAPP SHARE PROGRESS
-function shareWhatsApp(){
-  const today=todayStr();
-  const log=JSON.parse(localStorage.getItem('tqlog')||'{}');
-  const td=log[today]||{p:[],m:0};
-  const streak=calcStreak();
-  const total=Object.values(log).reduce((s,d)=>s+((d.p||[]).length),0);
-  const goal=parseInt(localStorage.getItem('tqgoal')||10);
-  const todayPgs=(td.p||[]).length;
-  const pct=Math.min(100,Math.round(todayPgs/goal*100));
-  // build progress bar emoji
-  const filled=Math.round(pct/10);
-  const bar='🟩'.repeat(filled)+'⬜'.repeat(10-filled);
-  let sname='';
-  if(PDF){for(let i=APK.length-1;i>=0;i--){if(sPg(i)<=curPg){sname=SU[i];break;}}}
-  const msg=
-`📖 *القرآن الکریم — روزانہ پیشرفت*
-
-📅 تاریخ: ${today}
-🔥 سلسلہ: ${streak} دن
-📄 آج کے صفحات: ${todayPgs} / ${goal}
-📊 ہدف: ${bar} ${pct}%
-📚 کل صفحات: ${total}
-${sname?`🕌 موجودہ مقام: ${sname} — ص ${curPg}`:''}
-
-قرآن کریم روزانہ پڑھیں! 🤲`;
-  const url=`https://wa.me/?text=${encodeURIComponent(msg)}`;
-  window.open(url,'_blank');
-}
 
 // ═══════════════════════════════════════
 // SCHEDULED READING MODE
@@ -3155,6 +3461,11 @@ function ldSchedule(){
 // ═══════════════════════════════════════
 // INIT
 async function init(){
+  // Request persistent storage (non-blocking)
+  if(navigator.storage&&navigator.storage.persist){
+    navigator.storage.persist().catch(()=>{});
+  }
+
   if(localStorage.getItem('tqdk')==='1')togDk();
   if(localStorage.getItem('tqsp')==='1')togSepia();
   const th=localStorage.getItem('tqtheme')||'';setTheme(th,true);
@@ -3189,17 +3500,22 @@ async function init(){
   // Reminder check
   const remT=localStorage.getItem('tqrem');
   if(remT)document.getElementById('rem-lbl').textContent=`یاددہانی: ${remT} بجے فعال ہے`;
+  // ── PDF خودبخود لوڈ کریں ──
   try{
-    await openIDB();
-    const rec=await idbGet();
-    if(rec){
-      const name=localStorage.getItem('tqname')||rec.name||'PDF';
-      document.getElementById('cbn').style.display='block';
-      document.getElementById('cbnname').textContent=`"${name}" دوبارہ کھولیں — کلک کریں`;
-      showLdg('محفوظ PDF لوڈ ہو رہی ہے...');
-      await initPDF(rec.buf,name,false);
+    const rec = await loadPdfFromDB();
+    if(rec && rec.buf && rec.buf.byteLength > 100){
+      const name = localStorage.getItem('tqname') || rec.name || 'القرآن الکریم';
+      document.getElementById('cbn').style.display = 'block';
+      document.getElementById('cbnname').textContent = `📖 "${name}" — خودبخود کھل رہی ہے...`;
+      showLdg(`"${name}" لوڈ ہو رہی ہے...`);
+      await initPDF(rec.buf, name, false);
+      setTimeout(()=>toast(`✅ "${name}" خودبخود لوڈ ہوگئی`), 600);
+    }else{
+      showUp();
     }
-  }catch(e){showUp();}
+  }catch(e){
+    showUp();
+  }
   // Start read-time tracker
   setInterval(()=>{
     if(PDF&&!document.hidden){
@@ -3216,15 +3532,7 @@ async function init(){
   },60000);
 }
 
-// fix swMT
-function swMT(t,el){
-  document.getElementById('mts').classList.remove('on');
-  document.getElementById('mtp').classList.remove('on');
-  document.getElementById('mtps').classList.remove('on');
-  document.getElementById('mtpp').classList.remove('on');
-  if(t==='s'){document.getElementById('mts').classList.add('on');document.getElementById('mtps').classList.add('on');}
-  else{document.getElementById('mtp').classList.add('on');document.getElementById('mtpp').classList.add('on');}
-}
+
 
 // ═══════════════════════════════════════
 // FULLSCREEN
@@ -3514,8 +3822,64 @@ function scheduleReminder(t){
   },ms);
 }
 
+// ═══════════════════════════════════════
+// BACK BUTTON — Android PWA
+// ابتدائی حالت میں history میں ایک اضافی state ڈالیں تاکہ back button پکڑ سکیں
+(function setupBackHandler(){
+  // صرف ایک بار pushState کریں
+  if(!history.state || !history.state.qapp){
+    history.pushState({qapp:true},'','');
+  }
+})();
+
+function _popHandler(e){
+  // Back pressed: ہمارا pushed state پہلے ہی browser نے pop کردیا
+  // Dialog دکھائیں — اگر "نہیں" تو دوبارہ push کریں، "ہاں" ہو تو چھوڑ دیں
+  e.preventDefault();
+  showExitConfirm();
+}
+window.addEventListener('popstate', _popHandler);
+
+function showExitConfirm(){
+  const ov = document.getElementById('exit-overlay');
+  if(ov) ov.classList.add('on');
+}
+function exitCancel(){
+  // دوبارہ arm کریں: نیا state push کریں تاکہ اگلا back بھی پکڑا جائے
+  history.pushState({qapp:true},'','');
+  const ov = document.getElementById('exit-overlay');
+  if(ov) ov.classList.remove('on');
+}
+function exitConfirm(){
+  // صارف باہر جانا چاہتا ہے
+  window.removeEventListener('popstate', _popHandler);
+  const ov = document.getElementById('exit-overlay');
+  if(ov) ov.classList.remove('on');
+  // Android PWA میں history.back() سے ایپ بند ہوتی ہے
+  history.back();
+  // 400ms بعد window.close() کی کوشش (fallback)
+  setTimeout(()=>{
+    try{ window.close(); }catch(e){}
+    // اگر کچھ نہ ہو تو صفحہ خالی کریں
+    try{ document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;color:#666;font-size:1.2rem">ایپ بند ہوگئی</div>'; }catch(e2){}
+  }, 400);
+}
+
 init();
 </script>
+<!-- EXIT CONFIRMATION -->
+<div id="exit-overlay" class="exit-overlay">
+  <div class="exit-box">
+    <div class="exit-icon">📖</div>
+    <div class="exit-title">ایپ بند کریں؟</div>
+    <div class="exit-msg">کیا آپ القرآن الکریم ایپ سے باہر جانا چاہتے ہیں؟</div>
+    <div class="exit-btns">
+      <button class="exit-btn no" onclick="exitCancel()">نہیں — واپس</button>
+      <button class="exit-btn yes" onclick="exitConfirm()">ہاں — بند کریں</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
 
